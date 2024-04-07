@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://cp4afoylm07t3"]
+[gd_scene load_steps=28 format=3 uid="uid://cp4afoylm07t3"]
 
 [ext_resource type="PackedScene" uid="uid://byy0nyaw6gtki" path="res://Objects/Room_objects/objMusicPlayer.tscn" id="1_83y07"]
 [ext_resource type="AudioStream" uid="uid://cbtxeavsqivpn" path="res://Audio/Music/musLevel01.ogg" id="2_s7qj5"]
@@ -23,8 +23,7 @@
 [ext_resource type="AudioStream" uid="uid://cdt6et828ao0j" path="res://Audio/Sounds/sndBlockChange.wav" id="17_cd6cd"]
 [ext_resource type="PackedScene" uid="uid://bjbhbgxqbori8" path="res://Objects/Trigger_system/objTriggerBlock.tscn" id="18_2ux6s"]
 [ext_resource type="PackedScene" uid="uid://cuixijthhxfki" path="res://Objects/Gimmicks/objJumpRefresher.tscn" id="19_iudxs"]
-[ext_resource type="PackedScene" uid="uid://chskqaeqby1wj" path="res://Objects/Hazards/objJumpSwitchSpikeUp.tscn" id="21_0k3gp"]
-[ext_resource type="PackedScene" uid="uid://dh3qghmnw4kej" path="res://Objects/Hazards/objJumpSwitchSpikeDown.tscn" id="22_o28gh"]
+[ext_resource type="PackedScene" uid="uid://chskqaeqby1wj" path="res://Objects/Hazards/objJumpSwitchSpike.tscn" id="21_0k3gp"]
 [ext_resource type="PackedScene" uid="uid://bupj3p8n52ks3" path="res://Objects/Trigger_system/objMultiTrigger.tscn" id="25_rb82s"]
 [ext_resource type="AudioStream" uid="uid://bbskkobrph305" path="res://Audio/Sounds/sndCoin.wav" id="26_3t3hh"]
 [ext_resource type="PackedScene" uid="uid://dvh5p5m0s4ju3" path="res://Objects/Collectables/objCollectableItem.tscn" id="27_parnu"]
@@ -93,15 +92,19 @@ collision_interaction = 3
 position = Vector2(752, 528)
 scene_to_destroy = NodePath("../../Hazards/objLaserStatic")
 
-[node name="objJumpSwitchSpikeDown" parent="Gimmicks" instance=ExtResource("22_o28gh")]
+[node name="objJumpSwitchSpike3" parent="Gimmicks" instance=ExtResource("21_0k3gp")]
 modulate = Color(1, 1, 1, 0.313726)
 position = Vector2(1040, 528)
+scale = Vector2(1, -1)
 spike_hidden = true
+spike_direction = 2
 
-[node name="objJumpSwitchSpikeDown2" parent="Gimmicks" instance=ExtResource("22_o28gh")]
+[node name="objJumpSwitchSpike4" parent="Gimmicks" instance=ExtResource("21_0k3gp")]
 modulate = Color(1, 1, 1, 0.313726)
 position = Vector2(912, 528)
+scale = Vector2(1, -1)
 spike_hidden = true
+spike_direction = 2
 
 [node name="objCollectableItem" parent="Gimmicks" instance=ExtResource("27_parnu")]
 position = Vector2(1392, 448)
@@ -112,11 +115,13 @@ item_name = "Item 03"
 [node name="tilSpikes" parent="Hazards" instance=ExtResource("13_684js")]
 layer_0/tile_data = PackedInt32Array(458792, 65536, 0, 458793, 65536, 0, 458794, 65536, 0, 524335, 0, 0)
 
-[node name="objJumpSwitchSpikeUp" parent="Hazards" instance=ExtResource("21_0k3gp")]
+[node name="objJumpSwitchSpike" parent="Hazards" instance=ExtResource("21_0k3gp")]
 position = Vector2(1392, 176)
 
-[node name="objJumpSwitchSpikeDown" parent="Hazards" instance=ExtResource("22_o28gh")]
+[node name="objJumpSwitchSpike2" parent="Hazards" instance=ExtResource("21_0k3gp")]
 position = Vector2(1392, 144)
+scale = Vector2(1, -1)
+spike_direction = 2
 
 [node name="objLaserStatic" parent="Hazards" instance=ExtResource("13_dou4i")]
 position = Vector2(720, 392)
