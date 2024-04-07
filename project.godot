@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="ReloadedK's Godot Fangame Engine"
+config/name="ReloadedK's Engine - Gaph Fork"
 config/tags=PackedStringArray("fangame_engine")
 run/main_scene="res://Rooms/00_Title_and_menus/rTitle.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
