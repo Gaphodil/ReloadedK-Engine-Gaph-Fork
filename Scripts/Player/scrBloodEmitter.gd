@@ -31,7 +31,7 @@ func _on_timer_emitter_stop_timeout():
 func _on_timer_destroy_timeout():
 	
 	# Creates the classic GAMEOVER screen if autoreset is not enabled
-	if !GLOBAL_SETTINGS.AUTORESET:
+	if !GLOBAL_SETTINGS.get_setting("autoreset"):
 		var gameover = load("res://Objects/Player/objGameOver.tscn")
 		var gameover_id = gameover.instantiate()
 		add_sibling(gameover_id)
@@ -45,5 +45,5 @@ func _on_timer_blink_timeout():
 
 # Resets automatically, if the global setting is set to "true"
 func _on_timer_autoreset_timeout():
-	if GLOBAL_SETTINGS.AUTORESET:
+	if GLOBAL_SETTINGS.get_setting("autoreset"):
 		GLOBAL_GAME.reset()

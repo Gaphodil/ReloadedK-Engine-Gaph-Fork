@@ -124,7 +124,7 @@ func pause_game() -> void:
 # Toggles fullscreen on/off. When toggled from fullscreen to windowed, it
 # remembers the initial width/height and sets its initial position (centered)
 func toggle_fullscreen() -> void:
-	GLOBAL_SETTINGS.FULLSCREEN = !GLOBAL_SETTINGS.FULLSCREEN
+	GLOBAL_SETTINGS.flip_setting("fullscreen")
 	GLOBAL_SETTINGS.set_window_mode()
 
 
@@ -229,12 +229,12 @@ func game_quit() -> void:
 
 # Sets vsync. Called from the settings menu
 func set_vsync():
-	GLOBAL_SETTINGS.VSYNC = !GLOBAL_SETTINGS.VSYNC
+	GLOBAL_SETTINGS.flip_setting("vsync")
 	GLOBAL_SETTINGS.set_vsync_mode()
 
 # Sets window scale. Called from the settings menu
 func set_window_scale(scaling: float):
-	GLOBAL_SETTINGS.WINDOW_SCALING = scaling
+	GLOBAL_SETTINGS.set_setting("window_scaling", scaling)
 	GLOBAL_SETTINGS.set_window_scale()
 
 # Checks the current scene/room's name. We use this to make sure we're not
@@ -304,7 +304,7 @@ func handle_titlebar():
 	if not is_valid_room():
 		get_window().title = ProjectSettings.get_setting("application/config/name")
 		return
-	var setting = GLOBAL_SETTINGS.TITLEBAR_STATS
+	var setting: GLOBAL_SETTINGS.TitlebarStats = GLOBAL_SETTINGS.get_setting("titlebar_stats")
 	if setting == GLOBAL_SETTINGS.TitlebarStats.OFF:
 		return
 	var title = ProjectSettings.get_setting("application/config/name") + " -"

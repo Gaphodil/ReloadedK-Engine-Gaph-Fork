@@ -21,8 +21,8 @@ func _ready():
 	# Load and set volume and music by reading GLOBAL_SETTINGS
 	GLOBAL_SETTINGS.load_settings()
 	
-	music_volume = GLOBAL_SETTINGS.MUSIC_VOLUME
-	sound_volume = GLOBAL_SETTINGS.SOUND_VOLUME
+	music_volume = GLOBAL_SETTINGS.get_setting("music_volume")
+	sound_volume = GLOBAL_SETTINGS.get_setting("sound_volume")
 	
 	# Sets text and color for the button labels
 	set_labels_text()
@@ -124,8 +124,8 @@ func set_button_colors(button_id):
 func quit_pause():
 	
 	# Save settings
-	GLOBAL_SETTINGS.MUSIC_VOLUME = music_volume
-	GLOBAL_SETTINGS.SOUND_VOLUME = sound_volume
+	GLOBAL_SETTINGS.set_setting("music_volume", music_volume)
+	GLOBAL_SETTINGS.set_setting("sound_volume", sound_volume)
 	GLOBAL_SETTINGS.save_settings()
 	
 	# Unset pause, unpause game

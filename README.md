@@ -19,6 +19,10 @@ You can check the [engine's documentation](https://github.com/ReloadedK-git/Relo
 
 # Changelog
 
+### v1.11 (TBA)
+
+* Redesign `scrGlobalSettings` from hardcoded variables to a dictionary
+
 ### v1.10 (2024-04-07)
 
 * Added window scaling, FPS display, and death/time stats in window title

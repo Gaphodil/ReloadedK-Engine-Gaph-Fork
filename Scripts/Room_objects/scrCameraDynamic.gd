@@ -34,7 +34,8 @@ func _ready():
 		
 		# Camera zoom at start
 		if !ignore_global_zoom:
-			zoom = Vector2(GLOBAL_SETTINGS.ZOOM_SCALING, GLOBAL_SETTINGS.ZOOM_SCALING)
+			var zoom_scale: float = GLOBAL_SETTINGS.get_setting("zoom_scaling")
+			zoom = Vector2(zoom_scale, zoom_scale)
 		else:
 			zoom = manual_zoom_amount
 		

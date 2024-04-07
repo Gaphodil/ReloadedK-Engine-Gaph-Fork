@@ -2,30 +2,28 @@ extends Node
 
 const DATA_PATH := "user://Data/Settings.cfg"
 #const SAVE_PASSWORD_STRING := "Change me!"
-var MUSIC_VOLUME: float = 1.0
-var SOUND_VOLUME: float = 1.0
-var FULLSCREEN: bool = false
-var ZOOM_SCALING: float = 1.0
-var HUD_SCALING: float = 1.0
-var WINDOW_SCALING: float = 1.0
-var VSYNC: bool = true
-var AUTORESET: bool = false
-var EXTRA_KEYS: bool = false
-var FPS_DISPLAY: FpsDisplay = FpsDisplay.OFF
-var TITLEBAR_STATS: TitlebarStats = TitlebarStats.ALL
 
-# Default values, for when you need to reset them from the settings menu
-const DEFAULT_MUSIC_VOLUME: float = 1.0
-const DEFAULT_SOUND_VOLUME: float = 1.0
-const DEFAULT_FULLSCREEN: bool = false
-const DEFAULT_ZOOM_SCALING: float = 1.0
-const DEFAULT_HUD_SCALING: float = 1.0
-const DEFAULT_WINDOW_SCALING: float = 1.0
-const DEFAULT_VSYNC: bool = true
-const DEFAULT_AUTORESET: bool = false
-const DEFAULT_EXTRA_KEYS: bool = false
-const DEFAULT_FPS_DISPLAY: FpsDisplay = FpsDisplay.OFF
-const DEFAULT_TITLEBAR_STATS: TitlebarStats = TitlebarStats.ALL
+## The dictionary of settings, structured similarly to
+## the config file. Keys are section names, values are
+## sub-dictionaries of setting names, and their type and value.
+## The setting value is duplicated to represent both default and actual values.
+var dict: Dictionary = {
+	"volume" : {
+		"music_volume" : [TYPE_FLOAT, 1.0],
+		"sound_volume" : [TYPE_FLOAT, 1.0],
+	},
+	"settings" : {
+		"fullscreen" : [TYPE_BOOL, false],
+		"zoom_scaling" : [TYPE_FLOAT, 1.0],
+		"hud_scaling" : [TYPE_FLOAT, 1.0],
+		"window_scaling" : [TYPE_FLOAT, 1.0],
+		"vsync" : [TYPE_BOOL, true],
+		"autoreset" : [TYPE_BOOL, false],
+		"fps_display" : [TYPE_INT, FpsDisplay.OFF],
+		"titlebar_stats" : [TYPE_INT, TitlebarStats.ALL],
+		"extra_keys" : [TYPE_BOOL, false],
+	},
+}
 
 # Window related variables, for handling window modes
 var INITIAL_WINDOW_WIDTH: int = DisplayServer.window_get_size().x
@@ -52,6 +50,11 @@ func _ready():
 	# If, for any reason, the Data directory doesn't exist, it creates it
 	if not dir.dir_exists("user://Data"):
 		dir.make_dir("Data")
+
+	# For every value in the settings dict, duplicate the default value
+	for section in dict.keys():
+		for setting in dict[section].keys():
+			dict[section][setting].append(dict[section][setting][1])
 	
 	# If the settings file doesn't exist, it creates it. If it does exist, it
 	# loads it
@@ -60,23 +63,44 @@ func _ready():
 	else:
 		load_settings()
 
+func get_setting(setting: String):
+	# Note that this won't function if a setting name is shared between sections
+	for section in dict.keys():
+		if dict[section].has(setting):
+			return dict[section][setting][1]
+	print_debug("Setting " + setting + " not found")
 
+## Sets a value. Throws an error if the value is of the wrong type.
+func set_setting(setting: String, value):
+	for section in dict.keys():
+		if dict[section].has(setting):
+			assert(
+				typeof(value) == dict[section][setting][0],
+				"Setting " + setting + " must be of type " + str(dict[section][setting][0])
+			)
+			dict[section][setting][1] = value
+			return
+	print_debug("Setting " + setting + " not found")
+
+## Inverts a boolean setting. Throws an error if the setting is not a boolean.
+func flip_setting(setting: String):
+	for section in dict.keys():
+		if dict[section].has(setting):
+			assert(
+				typeof(dict[section][setting][1]) == TYPE_BOOL,
+				"Setting " + setting + " must be of type bool"
+			)
+			dict[section][setting][1] = !dict[section][setting][1]
+			return
+	print_debug("Setting " + setting + " not found")
 
 # Saves settings
 func save_settings() -> void:
 	var configFile := ConfigFile.new()
-	
-	configFile.set_value("volume", "music_volume", MUSIC_VOLUME)
-	configFile.set_value("volume", "sound_volume", SOUND_VOLUME)
-	configFile.set_value("settings", "fullscreen", FULLSCREEN)
-	configFile.set_value("settings", "zoom_scaling", ZOOM_SCALING)
-	configFile.set_value("settings", "hud_scaling", HUD_SCALING)
-	configFile.set_value("settings", "window_scaling", WINDOW_SCALING)
-	configFile.set_value("settings", "vsync", VSYNC)
-	configFile.set_value("settings", "autoreset", AUTORESET)
-	configFile.set_value("settings", "fps_display", FPS_DISPLAY)
-	configFile.set_value("settings", "titlebar_stats", TITLEBAR_STATS)
-	configFile.set_value("settings", "extra_keys", EXTRA_KEYS)
+
+	for section in dict.keys():
+		for setting in dict[section].keys():
+			configFile.set_value(section, setting, dict[section][setting][1])
 	
 	for action in InputMap.get_actions():
 		configFile.set_value("controls", action, InputMap.action_get_events(action))
@@ -89,20 +113,20 @@ func load_settings() -> void:
 	var configFile: = ConfigFile.new()
 	configFile.load(DATA_PATH)
 	
-	MUSIC_VOLUME = configFile.get_value("volume", "music_volume", MUSIC_VOLUME)
-	SOUND_VOLUME = configFile.get_value("volume", "sound_volume", SOUND_VOLUME)
-	FULLSCREEN = configFile.get_value("settings", "fullscreen", FULLSCREEN)
-	ZOOM_SCALING = configFile.get_value("settings", "zoom_scaling", ZOOM_SCALING)
-	HUD_SCALING = configFile.get_value("settings", "hud_scaling", HUD_SCALING)
-	WINDOW_SCALING = configFile.get_value("settings", "window_scaling", WINDOW_SCALING)
-	VSYNC = configFile.get_value("settings", "vsync", VSYNC)
-	AUTORESET = configFile.get_value("settings", "autoreset", AUTORESET)
-	FPS_DISPLAY = configFile.get_value("settings", "fps_display", FPS_DISPLAY)
-	TITLEBAR_STATS = configFile.get_value("settings", "titlebar_stats", TITLEBAR_STATS)
-	EXTRA_KEYS = configFile.get_value("settings", "extra_keys", EXTRA_KEYS)
+	for section in dict.keys():
+		for setting in dict[section].keys():
+			dict[section][setting][1] = configFile.get_value(
+				section, setting, dict[section][setting][1]
+			)
 	
-	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Sounds"), linear_to_db(SOUND_VOLUME))
-	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Music"), linear_to_db(MUSIC_VOLUME))
+	AudioServer.set_bus_volume_db(
+		AudioServer.get_bus_index("Sounds"),
+		linear_to_db(get_setting("sound_volume"))
+	)
+	AudioServer.set_bus_volume_db(
+		AudioServer.get_bus_index("Music"),
+		linear_to_db(get_setting("music_volume"))
+	)
 	
 	# Applies window and vsync mode
 	set_window_mode()
@@ -117,34 +141,31 @@ func load_settings() -> void:
 
 # Resets and sets settings to their default values
 func default_settings() -> void:
-	
-	MUSIC_VOLUME = DEFAULT_MUSIC_VOLUME
-	SOUND_VOLUME = DEFAULT_SOUND_VOLUME
-	FULLSCREEN = DEFAULT_FULLSCREEN
-	ZOOM_SCALING = DEFAULT_ZOOM_SCALING
-	HUD_SCALING = DEFAULT_HUD_SCALING
-	WINDOW_SCALING = DEFAULT_WINDOW_SCALING
-	VSYNC = DEFAULT_VSYNC
-	AUTORESET = DEFAULT_AUTORESET
-	FPS_DISPLAY = DEFAULT_FPS_DISPLAY
-	TITLEBAR_STATS = DEFAULT_TITLEBAR_STATS
-	EXTRA_KEYS = DEFAULT_EXTRA_KEYS
-	
-	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Music"), linear_to_db(MUSIC_VOLUME))
-	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Sounds"), linear_to_db(SOUND_VOLUME))
-	
+	for section in dict.keys():
+		for setting in dict[section].keys():
+			dict[section][setting][1] = dict[section][setting][2]
+
+	AudioServer.set_bus_volume_db(
+		AudioServer.get_bus_index("Sounds"),
+		linear_to_db(get_setting("sound_volume"))
+	)
+	AudioServer.set_bus_volume_db(
+		AudioServer.get_bus_index("Music"),
+		linear_to_db(get_setting("music_volume"))
+	)
+
 	# Calls the window and vsync mode functions after setting them to their
 	# default states
 	set_window_mode()
 	set_vsync_mode()
-	
+
 	# Sets HUD scaling by calling objHUDs method once
 	if is_instance_valid(objHUD):
 		objHUD.set_HUD_scaling()
 
 # Sets the game's window mode by checking the FULLSCREEN boolean
 func set_window_mode():
-	if FULLSCREEN == true:
+	if get_setting("fullscreen") == true:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 	else:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
@@ -154,14 +175,15 @@ func set_window_mode():
 
 # Sets the game's vsync mode by checking the VSYNC boolean
 func set_vsync_mode():
-	if VSYNC == true:
+	if get_setting("vsync") == true:
 		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
 	else:
 		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
 
 # Sets the window scaling
 func set_window_scale():
-	var newSize = Vector2(INITIAL_WINDOW_WIDTH * WINDOW_SCALING, INITIAL_WINDOW_HEIGHT * WINDOW_SCALING)
+	var scale = get_setting("window_scaling")
+	var newSize = Vector2(INITIAL_WINDOW_WIDTH * scale, INITIAL_WINDOW_HEIGHT * scale)
 	var oldSize = Vector2(DisplayServer.window_get_size())
 	# Check to avoid recentering when not changing scale
 	if oldSize != newSize:

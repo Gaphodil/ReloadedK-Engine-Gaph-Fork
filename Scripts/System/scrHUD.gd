@@ -5,7 +5,7 @@ var item_text: String = ""
 @onready var item_container: Node = $Display/MarginContainer2
 @onready var container_timer: Node = $Display/MarginContainer2/Timer
 @onready var fps_container: Node = $Display/MarginContainer3
-@onready var fps_setting: GLOBAL_SETTINGS.FpsDisplay = GLOBAL_SETTINGS.FPS_DISPLAY
+@onready var fps_setting: GLOBAL_SETTINGS.FpsDisplay = GLOBAL_SETTINGS.get_setting("fps_display")
 var fps_fadeout_amt: float = -1.0
 
 func _ready():
@@ -20,8 +20,9 @@ func _physics_process(delta):
 	handle_fps_indic(delta)
 
 func set_HUD_scaling():
-	$Display/MarginContainer.scale = Vector2(GLOBAL_SETTINGS.HUD_SCALING, GLOBAL_SETTINGS.HUD_SCALING)
-	item_container.scale = Vector2(GLOBAL_SETTINGS.HUD_SCALING, GLOBAL_SETTINGS.HUD_SCALING)
+	var hud_scale: float = GLOBAL_SETTINGS.get_setting("hud_scaling")
+	$Display/MarginContainer.scale = Vector2(hud_scale, hud_scale)
+	item_container.scale = Vector2(hud_scale, hud_scale)
 
 # The debug HUD should only get shown as long as objPlayer exists in the scene,
 # regardless of debug_mode being true or false

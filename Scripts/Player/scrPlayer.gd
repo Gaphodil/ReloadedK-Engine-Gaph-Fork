@@ -170,7 +170,7 @@ func handle_movement() -> void:
 			xscale = h_direction > 0
 	
 	# Extra keys off/on
-	if !GLOBAL_SETTINGS.EXTRA_KEYS:
+	if !GLOBAL_SETTINGS.get_setting("extra_keys"):
 		velocity.x = main_direction * h_speed
 		xscale_to_direction.call(main_direction)
 	else:
@@ -278,7 +278,7 @@ func handle_walljumping():
 		if Input.is_action_pressed("button_jump"):
 			
 			# Extra keys off/on
-			if !GLOBAL_SETTINGS.EXTRA_KEYS:
+			if !GLOBAL_SETTINGS.get_setting("extra_keys"):
 				
 				# Walljump to the right
 				if (Input.is_action_pressed("button_right")) and (jump_direction == Vector2.RIGHT):
@@ -303,7 +303,7 @@ func handle_walljumping():
 		else:
 			
 			# Extra keys off/on
-			if !GLOBAL_SETTINGS.EXTRA_KEYS:
+			if !GLOBAL_SETTINGS.get_setting("extra_keys"):
 				
 				# Not holding the jump button, but pressing left or right on the 
 				# opposite direction to the vine, leaves it and stops the

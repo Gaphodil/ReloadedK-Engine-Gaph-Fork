@@ -60,7 +60,7 @@ func _physics_process(_delta):
 	
 	# Re-updates fullscreen in case we press "F4" in the middle of the settings
 	# menu
-	fullscreen_on = GLOBAL_SETTINGS.FULLSCREEN
+	fullscreen_on = GLOBAL_SETTINGS.get_setting("fullscreen")
 
 
 # Updates anchor positions for the camera when an input is detected
@@ -181,15 +181,15 @@ func load_from_global_settings():
 	# inside of this settings menu
 	GLOBAL_SETTINGS.load_settings()
 	
-	music_volume = GLOBAL_SETTINGS.MUSIC_VOLUME
-	sound_volume = GLOBAL_SETTINGS.SOUND_VOLUME
-	fullscreen_on = GLOBAL_SETTINGS.FULLSCREEN
-	zoom_scaling = GLOBAL_SETTINGS.ZOOM_SCALING
-	HUD_scaling = GLOBAL_SETTINGS.HUD_SCALING
-	window_scaling = GLOBAL_SETTINGS.WINDOW_SCALING
-	vsync_on = GLOBAL_SETTINGS.VSYNC
-	autoreset_on = GLOBAL_SETTINGS.AUTORESET
-	extra_keys_on = GLOBAL_SETTINGS.EXTRA_KEYS
+	music_volume = GLOBAL_SETTINGS.get_setting("music_volume")
+	sound_volume = GLOBAL_SETTINGS.get_setting("sound_volume")
+	fullscreen_on = GLOBAL_SETTINGS.get_setting("fullscreen")
+	zoom_scaling = GLOBAL_SETTINGS.get_setting("zoom_scaling")
+	HUD_scaling = GLOBAL_SETTINGS.get_setting("hud_scaling")
+	window_scaling = GLOBAL_SETTINGS.get_setting("window_scaling")
+	vsync_on = GLOBAL_SETTINGS.get_setting("vsync")
+	autoreset_on = GLOBAL_SETTINGS.get_setting("autoreset")
+	extra_keys_on = GLOBAL_SETTINGS.get_setting("extra_keys")
 
 
 # Sets and updates the text from each one of the button's labels
@@ -212,12 +212,12 @@ func set_labels_text():
 func save_on_exit():
 	
 	# Updating the global settings file
-	GLOBAL_SETTINGS.MUSIC_VOLUME = music_volume
-	GLOBAL_SETTINGS.SOUND_VOLUME = sound_volume
-	GLOBAL_SETTINGS.ZOOM_SCALING = zoom_scaling
-	GLOBAL_SETTINGS.HUD_SCALING = HUD_scaling
-	GLOBAL_SETTINGS.AUTORESET = autoreset_on
-	GLOBAL_SETTINGS.EXTRA_KEYS = extra_keys_on
+	GLOBAL_SETTINGS.set_setting("music_volume", music_volume)
+	GLOBAL_SETTINGS.set_setting("sound_volume", sound_volume)
+	GLOBAL_SETTINGS.set_setting("zoom_scaling", zoom_scaling)
+	GLOBAL_SETTINGS.set_setting("hud_scaling", HUD_scaling)
+	GLOBAL_SETTINGS.set_setting("autoreset", autoreset_on)
+	GLOBAL_SETTINGS.set_setting("extra_keys", extra_keys_on)
 	
 	# Sets HUD scaling by calling objHUDs method once
 	if is_instance_valid(objHUD):

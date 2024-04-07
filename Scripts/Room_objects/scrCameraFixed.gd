@@ -25,7 +25,8 @@ func _ready():
 	
 	# Sets initial zoom and scrolling speed
 	if !ignore_global_zoom:
-		zoom = Vector2(GLOBAL_SETTINGS.ZOOM_SCALING, GLOBAL_SETTINGS.ZOOM_SCALING)
+		var zoom_scale: float = GLOBAL_SETTINGS.get_setting("zoom_scaling")
+		zoom = Vector2(zoom_scale, zoom_scale)
 	else:
 		zoom = manual_zoom_amount
 	position_smoothing_speed = scrolling_speed
@@ -47,9 +48,9 @@ func _physics_process(_delta):
 # Sets the camera target. If it's valid, it then sets the position to the
 # center of the screen relative to the target's position
 func set_camera_target():
-	
-	var camera_width_zoom: float = camera_width / GLOBAL_SETTINGS.ZOOM_SCALING
-	var camera_height_zoom: float = camera_height / GLOBAL_SETTINGS.ZOOM_SCALING
+	var zoom_scale: float = GLOBAL_SETTINGS.get_setting("zoom_scaling")
+	var camera_width_zoom: float = camera_width / zoom_scale
+	var camera_height_zoom: float = camera_height / zoom_scale
 	
 	position.x = floor(target_node.position.x / camera_width_zoom) * camera_width_zoom + (camera_width_zoom / 2)
 	position.y = floor(target_node.position.y / camera_height_zoom) * camera_height_zoom + (camera_height_zoom / 2)

@@ -23,7 +23,7 @@ func _physics_process(_delta):
 		if dialog_scene != null:
 			
 			# Extra keys off/on
-			if !GLOBAL_SETTINGS.EXTRA_KEYS:
+			if !GLOBAL_SETTINGS.get_setting("extra_keys"):
 				if Input.is_action_just_pressed("button_up"):
 					if get_tree().get_nodes_in_group("Dialog").size() < 1:
 						var dialog_box_id = dialog_scene.instantiate()
