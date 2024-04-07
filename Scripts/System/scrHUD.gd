@@ -4,24 +4,24 @@ var item_sprite: CompressedTexture2D
 var item_text: String = ""
 @onready var item_container: Node = $Display/MarginContainer2
 @onready var container_timer: Node = $Display/MarginContainer2/Timer
-
-
+@onready var fps_container: Node = $Display/MarginContainer3
+@onready var fps_setting: GLOBAL_SETTINGS.FpsDisplay = GLOBAL_SETTINGS.FPS_DISPLAY
+var fps_fadeout_amt: float = -1.0
 
 func _ready():
 	$Display/MarginContainer2.set_visible(false)
+	fps_container.set_visible(false)
 	set_HUD_scaling()
 	handle_debug_mode()
+	handle_fps_indic(0)
 
-
-func _physics_process(_delta):
+func _physics_process(delta):
 	handle_debug_mode()
-
-
+	handle_fps_indic(delta)
 
 func set_HUD_scaling():
 	$Display/MarginContainer.scale = Vector2(GLOBAL_SETTINGS.HUD_SCALING, GLOBAL_SETTINGS.HUD_SCALING)
 	item_container.scale = Vector2(GLOBAL_SETTINGS.HUD_SCALING, GLOBAL_SETTINGS.HUD_SCALING)
-
 
 # The debug HUD should only get shown as long as objPlayer exists in the scene,
 # regardless of debug_mode being true or false
@@ -47,7 +47,6 @@ func handle_debug_mode() -> void:
 		$Display/MarginContainer.set_visible(false)
 		$Sprite2D.set_visible(false)
 
-
 # Sets the item container
 func handle_item_notification():
 	
@@ -61,7 +60,44 @@ func handle_item_notification():
 	# Starts the timer countdown
 	container_timer.start()
 
-
 # Hides the item container
 func _on_timer_timeout():
 	item_container.set_visible(false)
+
+# Shows the FPS in the HUD.
+func handle_fps_indic(delta):
+	fps_container.set_visible(false)
+	if not fps_setting == GLOBAL_SETTINGS.FpsDisplay.OFF:
+		var fps = Engine.get_frames_per_second()
+		var label = fps_container.get_child(0)
+		label.text = str(fps)
+		if (
+			fps_setting == GLOBAL_SETTINGS.FpsDisplay.ALWAYS_ON
+			or fps < 50
+		):
+			# Reset visibility
+			fps_container.set_visible(true)
+			fps_fadeout_amt = 0.0
+			fps_container.modulate.a = 1.0
+			# Change label colour by amount of lag
+			# yellow < 50 and red < 30
+			var col: Color
+			if fps < 30:
+				col = Color(1, 0, 0)
+			elif fps < 50:
+				col = Color(1, 1, 0)
+			else:
+				col = Color(1, 1, 1)
+			label.add_theme_color_override("font_color", col)
+		elif (
+			fps_setting == GLOBAL_SETTINGS.FpsDisplay.LAG_ONLY
+			and fps_fadeout_amt >= 0.0
+		):
+			fps_container.set_visible(true)
+			label.add_theme_color_override("font_color", Color(1, 1, 1))
+			# Fadeout the text if no longer lagging
+			fps_fadeout_amt += delta
+			fps_container.modulate.a = 1.0 - lerpf(0.0, 1.0, fps_fadeout_amt)
+			if fps_fadeout_amt >= 1.0:
+				fps_fadeout_amt = -1.0
+
