@@ -35,16 +35,12 @@ func _ready():
 		await get_tree().create_timer(0.001).timeout
 		$CollisionPolygon2D.disabled = false
 
+		# Set a listener to the player's jump signals
+		GLOBAL_INSTANCES.objPlayerID.connect("player_jumped", begin_switch)
+		GLOBAL_INSTANCES.objPlayerID.connect("player_djumped", begin_switch)
 
 func _physics_process(delta):
 	if not Engine.is_editor_hint():
-		if is_instance_valid(GLOBAL_INSTANCES.objPlayerID):
-			if Input.is_action_just_pressed("button_jump"):
-				spike_hidden = !spike_hidden
-				
-				if !changing_positions:
-					changing_positions = true
-			
 		# Position switching
 		switch_positions(delta)
 		
@@ -61,6 +57,11 @@ func set_initial_positions():
 	position_shown = global_position
 	position_hidden = global_position + Vector2(0, -32)
 
+func begin_switch():
+	spike_hidden = not spike_hidden
+	
+	if not changing_positions:
+		changing_positions = true
 
 func switch_positions(delta):
 	var snap_to_grid = func():

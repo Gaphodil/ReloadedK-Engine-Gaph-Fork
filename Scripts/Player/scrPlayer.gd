@@ -21,6 +21,12 @@ var create_bullet := preload("res://Objects/Player/objBullet.tscn")
 var jump_particle := preload("res://Objects/Player/objJumpParticle.tscn")
 @onready var animated_sprite = $playerSprites
 
+# Various signals. Only jump and djump are currently used!
+signal player_died
+signal player_jumped
+signal player_djumped
+signal player_walljumped
+signal player_shot
 
 func _ready():
 	
@@ -199,6 +205,8 @@ func handle_jumping() -> void:
 		if (is_on_floor() == true):
 			velocity.y = -s_jump_speed
 			GLOBAL_SOUNDS.play_sound(GLOBAL_SOUNDS.sndJump)
+			# Emit the `player_jumped` signal
+			player_jumped.emit()
 			
 		# If d_jump is available or you're inside a platform, the player now
 		# jumps with d_jump_speed. Inside of platforms you can jump infinitely,
@@ -208,6 +216,8 @@ func handle_jumping() -> void:
 			velocity.y = -d_jump_speed
 			d_jump = false
 			GLOBAL_SOUNDS.play_sound(GLOBAL_SOUNDS.sndDJump)
+			# Emit the `player_djumped` signal
+			player_djumped.emit()
 			
 			# Jump particles on djump, as long as the player is not in water
 			if (in_water == false):
@@ -261,6 +271,8 @@ func handle_walljumping():
 			velocity.y = -s_jump_speed
 			is_walljumping = false
 			GLOBAL_SOUNDS.play_sound(GLOBAL_SOUNDS.sndJump)
+			# Emit the `player_walljumped` signal
+			player_walljumped.emit()
 		
 		# Walljumping should only happen if we hold the jump button first
 		if Input.is_action_pressed("button_jump"):
@@ -347,6 +359,10 @@ func handle_shooting():
 			
 			# After everything is set and done, creates the bullet
 			get_parent().add_child(create_bullet_id)
+
+			# Emit `player_shot`
+			# If necessary, parameters can be passed e.g. bullet direction
+			player_shot.emit()
 
 
 # Method to handle sprite animations
@@ -444,6 +460,9 @@ func on_death():
 		
 		# Adds an extra death to the global death counter
 		GLOBAL_GAME.deaths += 1
+
+		# Emit `player_died`
+		player_died.emit()
 		
 		# Destroys the player
 		queue_free()
