@@ -11,6 +11,8 @@ var WINDOW_SCALING: float = 1.0
 var VSYNC: bool = true
 var AUTORESET: bool = false
 var EXTRA_KEYS: bool = false
+var FPS_DISPLAY: FpsDisplay = FpsDisplay.OFF
+var TITLEBAR_STATS: TitlebarStats = TitlebarStats.ALL
 
 # Default values, for when you need to reset them from the settings menu
 const DEFAULT_MUSIC_VOLUME: float = 1.0
@@ -18,16 +20,31 @@ const DEFAULT_SOUND_VOLUME: float = 1.0
 const DEFAULT_FULLSCREEN: bool = false
 const DEFAULT_ZOOM_SCALING: float = 1.0
 const DEFAULT_HUD_SCALING: float = 1.0
-var DEFAULT_WINDOW_SCALING: float = calc_default_window_scale()
+const DEFAULT_WINDOW_SCALING: float = 1.0
 const DEFAULT_VSYNC: bool = true
 const DEFAULT_AUTORESET: bool = false
 const DEFAULT_EXTRA_KEYS: bool = false
+const DEFAULT_FPS_DISPLAY: FpsDisplay = FpsDisplay.OFF
+const DEFAULT_TITLEBAR_STATS: TitlebarStats = TitlebarStats.ALL
 
 # Window related variables, for handling window modes
 var INITIAL_WINDOW_WIDTH: int = DisplayServer.window_get_size().x
 var INITIAL_WINDOW_HEIGHT: int = DisplayServer.window_get_size().y
 
+# Enum for FPS display values
+enum FpsDisplay {
+	OFF,
+	LAG_ONLY,
+	ALWAYS_ON	
+}
 
+# Enum for titlebar stats
+enum TitlebarStats {
+	OFF,
+	TIME,
+	DEATHS,
+	ALL
+}
 
 func _ready():
 	var dir = DirAccess.open("user://")
@@ -39,7 +56,6 @@ func _ready():
 	# If the settings file doesn't exist, it creates it. If it does exist, it
 	# loads it
 	if not dir.file_exists(DATA_PATH):
-		WINDOW_SCALING = calc_default_window_scale() # since one default is calculated
 		save_settings()
 	else:
 		load_settings()
@@ -58,6 +74,8 @@ func save_settings() -> void:
 	configFile.set_value("settings", "window_scaling", WINDOW_SCALING)
 	configFile.set_value("settings", "vsync", VSYNC)
 	configFile.set_value("settings", "autoreset", AUTORESET)
+	configFile.set_value("settings", "fps_display", FPS_DISPLAY)
+	configFile.set_value("settings", "titlebar_stats", TITLEBAR_STATS)
 	configFile.set_value("settings", "extra_keys", EXTRA_KEYS)
 	
 	for action in InputMap.get_actions():
@@ -79,6 +97,8 @@ func load_settings() -> void:
 	WINDOW_SCALING = configFile.get_value("settings", "window_scaling", WINDOW_SCALING)
 	VSYNC = configFile.get_value("settings", "vsync", VSYNC)
 	AUTORESET = configFile.get_value("settings", "autoreset", AUTORESET)
+	FPS_DISPLAY = configFile.get_value("settings", "fps_display", FPS_DISPLAY)
+	TITLEBAR_STATS = configFile.get_value("settings", "titlebar_stats", TITLEBAR_STATS)
 	EXTRA_KEYS = configFile.get_value("settings", "extra_keys", EXTRA_KEYS)
 	
 	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Sounds"), linear_to_db(SOUND_VOLUME))
@@ -106,6 +126,8 @@ func default_settings() -> void:
 	WINDOW_SCALING = DEFAULT_WINDOW_SCALING
 	VSYNC = DEFAULT_VSYNC
 	AUTORESET = DEFAULT_AUTORESET
+	FPS_DISPLAY = DEFAULT_FPS_DISPLAY
+	TITLEBAR_STATS = DEFAULT_TITLEBAR_STATS
 	EXTRA_KEYS = DEFAULT_EXTRA_KEYS
 	
 	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Music"), linear_to_db(MUSIC_VOLUME))
@@ -119,19 +141,6 @@ func default_settings() -> void:
 	# Sets HUD scaling by calling objHUDs method once
 	if is_instance_valid(objHUD):
 		objHUD.set_HUD_scaling()
-
-# Calculates the default window scale based on current monitor resolution
-func calc_default_window_scale():
-	var monitor = DisplayServer.screen_get_size()
-	# 1080p: 1.0x
-	# 1440p: 1.5x
-	# 4k: 2.0x
-	if monitor.y < 1440:
-		return 1.0
-	elif monitor.y < 2160:
-		return 1.5
-	return 2.0
-	
 
 # Sets the game's window mode by checking the FULLSCREEN boolean
 func set_window_mode():
@@ -157,11 +166,4 @@ func set_window_scale():
 	# Check to avoid recentering when not changing scale
 	if oldSize != newSize:
 		DisplayServer.window_set_size(newSize)
-		recenter_screen()
-
-# Recenter the screen
-func recenter_screen():
-	var scr_size = DisplayServer.screen_get_size()
-	var win_size = DisplayServer.window_get_size()
-	var scr_pos = DisplayServer.screen_get_position() # for multi-monitor
-	DisplayServer.window_set_position((scr_size - win_size) / 2 + scr_pos)
+		get_window().move_to_center()
