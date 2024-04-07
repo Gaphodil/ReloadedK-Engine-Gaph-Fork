@@ -89,6 +89,9 @@ func _physics_process(delta):
 	# Global time counter
 	time_counter(delta)
 
+	# Adds the time and deaths to the titlebar
+	handle_titlebar()
+
 
 # We use this to check what type of input device we're using, which in turn
 # affects the way things like settings are shown
@@ -295,3 +298,20 @@ func format_time(time_to_format):
 	var seconds = floor(fmod(time_to_format, 60.0));
 	
 	return ("%02d" % hours) + ":" + ("%02d" % minutes) + ":"+("%02d" % seconds).right(2)
+
+## Adds death/time to the title.
+func handle_titlebar():
+	if not is_valid_room():
+		get_window().title = ProjectSettings.get_setting("application/config/name")
+		return
+	var setting = GLOBAL_SETTINGS.TITLEBAR_STATS
+	if setting == GLOBAL_SETTINGS.TitlebarStats.OFF:
+		return
+	var title = ProjectSettings.get_setting("application/config/name") + " -"
+	var time_str = " Time: " + format_time(time)
+	if setting == GLOBAL_SETTINGS.TitlebarStats.TIME or setting == GLOBAL_SETTINGS.TitlebarStats.ALL:
+		title += time_str
+	var deaths_str = " Deaths: " + str(deaths)
+	if setting == GLOBAL_SETTINGS.TitlebarStats.DEATHS or setting == GLOBAL_SETTINGS.TitlebarStats.ALL:
+		title += deaths_str
+	get_window().title = title
