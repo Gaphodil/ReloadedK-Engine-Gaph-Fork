@@ -19,10 +19,11 @@ You can check the [engine's documentation](https://github.com/ReloadedK-git/Relo
 
 # Changelog
 
-### v1.10 (TBA)
+### v1.10 (2024-04-07)
 
 * Added window scaling, FPS display, and death/time stats in window title
-* 
+* Have `objPlayer` emit signals on certain actions
+* Refactor `objJumpSwitchSpike` to be one object with four directions, and swap on player jump signals rather than jump keypress
 
 <details>
 <summary>Original changelog (in reverse chronological order)</summary>
