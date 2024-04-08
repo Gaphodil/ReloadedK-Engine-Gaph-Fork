@@ -1,5 +1,7 @@
 extends TextureButton
 
+class_name MenuItemButton
+
 @export var _text: String
 var can_play_menu_sound = false
 var color_focused: Color = Color(1, 0, 0, 1)
@@ -11,7 +13,9 @@ var color_unfocused: Color = Color(0.22, 0.22, 0.22, 1)
 func _ready():
 	$Label.text = _text
 
-
+func set_text(text: String):
+	_text = text
+	$Label.text = _text
 
 # We wait 1 physics frame to allow the buttons to make a sound. Otherwise the
 # first thing that happens when entering the menu room is hearing a random beep

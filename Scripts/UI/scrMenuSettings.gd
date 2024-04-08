@@ -3,36 +3,42 @@ extends Control
 @export_file("*.tscn") var main_menu: String
 @export_file("*.tscn") var controls_menu: String
 
-# Audio related (music, sounds)
-@onready var music_bus: int = AudioServer.get_bus_index("Music")
-@onready var sounds_bus: int = AudioServer.get_bus_index("Sounds")
-var music_volume: float = 1.0
-var sound_volume: float = 1.0
-var volume_step: float = 0.1
+## The dictionary from GLOBAL_SETTINGS, by reference.
+@onready var dict: Dictionary = GLOBAL_SETTINGS.dict
 
-# Toggleable variables (fullscreen, vsync, autoreset)
-var fullscreen_on: bool = false
-var vsync_on: bool = true
-var autoreset_on: bool = false
-var extra_keys_on: bool = false
-
-# Scaling related
-var zoom_scaling: float = 1.0
-var HUD_scaling: float = 1.0
-var zoom_scaling_step: float = 1.0
-var HUD_scaling_step: float = 0.5
-var window_scaling: float = 1.0
-var window_scaling_step: float = 0.5
+## An array of setting names to exclude from this menu.
+var excluded_settings: Array = []
 
 # Camera handling
 @onready var camera_anchor_node: Node = $Environment/cameraAnchor
 
-
+signal changed_setting(setting)
 
 func _ready():
-	
-	# Sets focus to the first option (music volume)
-	$SettingsContainer/MusicVolume.grab_focus()
+	# Attach listener to GLOBAL_SETTINGS
+	if not changed_setting.is_connected(GLOBAL_SETTINGS.apply_side_effects):
+		changed_setting.connect(GLOBAL_SETTINGS.apply_side_effects)
+
+	# Creates each button and adds it to the settings container
+	init_menu_buttons()
+
+	# Resize the background and tiles to fit the settings container.
+	# The settings container does not automatically resize itself
+	# outside of the editor, so we have to do calculate it.
+	var height: int = max(
+		608,
+		64 * $SettingsContainer.get_child_count()
+	)
+	size.y = height
+	$SettingsContainer.position.y = 32
+	camera_anchor_node.get_child(0).limit_bottom = height
+	$Environment/objBackgroundMenus/ColorRect.size.y = height
+	$Environment/objBackgroundMenus/TextureRect.size.y = height
+	# Not sure about this one, there may be a better way
+	$Environment/til16x16.scale.y = height / 608.0
+
+	# Sets focus to the first option
+	$SettingsContainer.get_child(0).grab_focus()
 	
 	# Global data settings loading at startup
 	load_from_global_settings()
@@ -57,11 +63,6 @@ func _physics_process(_delta):
 			save_on_exit()
 			get_tree().change_scene_to_file(main_menu)
 			GLOBAL_SOUNDS.play_sound(GLOBAL_SOUNDS.sndPause)
-	
-	# Re-updates fullscreen in case we press "F4" in the middle of the settings
-	# menu
-	fullscreen_on = GLOBAL_SETTINGS.get_setting("fullscreen")
-
 
 # Updates anchor positions for the camera when an input is detected
 func _input(event):
@@ -70,85 +71,76 @@ func _input(event):
 
 ##################################################################################################################
 
-# Music volume
-func _on_music_volume_gui_input(_event):
-	if Input.is_action_just_pressed("ui_right"):
-		if (music_volume) < 0.99:
-			music_volume += volume_step
-			AudioServer.set_bus_volume_db(music_bus, linear_to_db(music_volume))
-	
-	if Input.is_action_just_pressed("ui_left"):
-		if (music_volume - volume_step) > 0.0:
-			music_volume -= volume_step
-			AudioServer.set_bus_volume_db(music_bus, linear_to_db(music_volume))
+## Inititalizes every [code]objMenuButton[/code] besides the last three.
+## Order is based on insertion order in [code]GLOBAL_SETTINGS[/code].
+func init_menu_buttons():
+	const button := preload("res://Objects/UI/objMenuButton.tscn")
+	var cur_button: MenuItemButton
+
+	# Iterate through the global settings dict
+	for setting in dict.keys():
+		# Skip if the setting is in the excluded list
+		if excluded_settings.has(setting):
+			continue
+
+		# Create a button. Button text is assigned later in _ready.
+		cur_button = button.instantiate()
+		# The name will be used to reference the specific button later.
+		cur_button.name = GLOBAL_SETTINGS.formatted[setting]
+
+		# Assign the callback based on setting type
+		if GLOBAL_SETTINGS.get_setting_type(setting) == TYPE_BOOL:
+			cur_button.pressed.connect(get_callback(setting))
+		else:
+			cur_button.gui_input.connect(get_callback(setting))
+
+		# Add to the scene tree. Since the last 3 buttons already exist,
+		# we slide it in right before
+		$SettingsContainer.add_child(cur_button)
+		$SettingsContainer.move_child(cur_button, -4)
+
+		# Set the button's neighbours, as well as the previous
+		cur_button.focus_neighbor_left = "."
+		cur_button.focus_neighbor_right = "."
+		if $SettingsContainer.get_child_count() <= 4:
+			cur_button.focus_neighbor_top = $SettingsContainer/Back.get_path()
+			$SettingsContainer/Back.focus_neighbor_bottom = cur_button.get_path()
+		else:
+			var prev_button: MenuItemButton = $SettingsContainer.get_child(-5)
+			cur_button.focus_neighbor_top = prev_button.get_path()
+			prev_button.focus_neighbor_bottom = cur_button.get_path()
+
+	# Assign the missing parts of the loop
+	cur_button.focus_neighbor_bottom = $SettingsContainer/Reset.get_path()
+	$SettingsContainer/Reset.focus_neighbor_top = cur_button.get_path()
+
+## Generates an appropriate lambda for the callback.
+## Depends on the setting's specified type.
+func get_callback(setting: String) -> Callable:
+	var setting_type: Variant.Type = GLOBAL_SETTINGS.get_setting_type(setting)
+
+	# This can apply to regular enums too!
+	if setting_type == TYPE_FLOAT or setting_type == TYPE_INT:
+		# This callback is for the `gui_event` signal
+		return func(_event):
+			if Input.is_action_just_pressed("ui_right"):
+				GLOBAL_SETTINGS.inc_setting(setting)
+			if Input.is_action_just_pressed("ui_left"):
+				GLOBAL_SETTINGS.dec_setting(setting)
+			changed_setting.emit(setting)
+
+	if setting_type == TYPE_BOOL:
+		# This callback is for the `pressed` signal
+		return func():
+			GLOBAL_SETTINGS.flip_setting(setting)
+			changed_setting.emit(setting)
+
+	# If you have settings of other types, you can add them here
+	return func(_event):
+		print_debug("Not implemented")
 
 
-# Sounds volume
-func _on_sfx_volume_gui_input(_event):
-	if Input.is_action_just_pressed("ui_right"):
-		if (sound_volume) < 0.99:
-			sound_volume += volume_step
-			AudioServer.set_bus_volume_db(sounds_bus, linear_to_db(sound_volume))
-	
-	if Input.is_action_just_pressed("ui_left"):
-		if (sound_volume - volume_step) > 0.0:
-			sound_volume -= volume_step
-			AudioServer.set_bus_volume_db(sounds_bus, linear_to_db(sound_volume))
-
-
-# Fullscreen on/off
-func _on_fullscreen_pressed():
-	fullscreen_on = !fullscreen_on
-	GLOBAL_GAME.toggle_fullscreen()
-
-# Zoom scale
-func _on_zoom_scale_gui_input(_event):
-	if Input.is_action_just_pressed("ui_right"):
-		if (zoom_scaling) < 2:
-			zoom_scaling += zoom_scaling_step
-	
-	if Input.is_action_just_pressed("ui_left"):
-		if (zoom_scaling) > 1:
-			zoom_scaling -= zoom_scaling_step
-
-
-# HUD scale
-func _on_hud_scale_gui_input(_event):
-	if Input.is_action_just_pressed("ui_right"):
-		if (HUD_scaling) < 1.5:
-			HUD_scaling += HUD_scaling_step
-	
-	if Input.is_action_just_pressed("ui_left"):
-		if (HUD_scaling) > 1:
-			HUD_scaling -= HUD_scaling_step
-
-# Window scale
-func _on_window_scale_gui_input(_event):
-	if Input.is_action_just_pressed("ui_right"):
-		if (window_scaling) < 2.5:
-			window_scaling += window_scaling_step
-	
-	if Input.is_action_just_pressed("ui_left"):
-		if (window_scaling) > 1.0:
-			window_scaling -= window_scaling_step
-	
-	GLOBAL_GAME.set_window_scale(window_scaling)
-
-# Vsync on/off
-func _on_vsync_pressed():
-	vsync_on = !vsync_on
-	GLOBAL_GAME.set_vsync()
-
-
-# Autoreset on/off
-func _on_auto_reset_pressed():
-	autoreset_on = !autoreset_on
-
-
-# Extra keys on/off
-func _on_extra_keys_pressed():
-	extra_keys_on = !extra_keys_on
-
+##################################################################################################################
 
 # Reset the setting's values back to their default ones. Also plays a
 # confirmation sound effect
@@ -177,71 +169,78 @@ func _on_back_pressed():
 # Loads data from the global settings file
 func load_from_global_settings():
 	
-	# Loads the settings data, then assigns it to the respective variables
-	# inside of this settings menu
+	# Loads the settings data, then updates the labels on each button
 	GLOBAL_SETTINGS.load_settings()
-	
-	music_volume = GLOBAL_SETTINGS.get_setting("music_volume")
-	sound_volume = GLOBAL_SETTINGS.get_setting("sound_volume")
-	fullscreen_on = GLOBAL_SETTINGS.get_setting("fullscreen")
-	zoom_scaling = GLOBAL_SETTINGS.get_setting("zoom_scaling")
-	HUD_scaling = GLOBAL_SETTINGS.get_setting("hud_scaling")
-	window_scaling = GLOBAL_SETTINGS.get_setting("window_scaling")
-	vsync_on = GLOBAL_SETTINGS.get_setting("vsync")
-	autoreset_on = GLOBAL_SETTINGS.get_setting("autoreset")
-	extra_keys_on = GLOBAL_SETTINGS.get_setting("extra_keys")
 
 
 # Sets and updates the text from each one of the button's labels
 func set_labels_text():
-	$SettingsContainer/MusicVolume/Label.text = "Music Volume: " + str(round(music_volume * 100)) + "%"
-	$SettingsContainer/SFXVolume/Label.text = "Sound Volume: " + str(round(sound_volume * 100)) + "%"
-	$SettingsContainer/Fullscreen/Label.text = "Fullscreen: " + str(bool_to_on_off(fullscreen_on))
-	$SettingsContainer/ZoomScale/Label.text = "Zoom Scale: " + str(zoom_scaling) + "x"
-	$SettingsContainer/HUDScale/Label.text = "HUD Scale: " + str(HUD_scaling) + "x"
-	$SettingsContainer/WindowScale/Label.text = "Window Scale: " + str(window_scaling) + "x"
-	$SettingsContainer/Vsync/Label.text = "Vsync: " + str(bool_to_on_off(vsync_on))
-	$SettingsContainer/AutoReset/Label.text = "Reset on Death: " + str(bool_to_on_off(autoreset_on))
-	$SettingsContainer/ExtraKeys/Label.text = "Extra keys: " + str(bool_to_on_off(extra_keys_on))
-	$SettingsContainer/Reset/Label.text = "Reset to Defaults"
-	$SettingsContainer/Controls/Label.text = "Controls"
-	$SettingsContainer/Back/Label.text = "Back"
+	for setting in dict.keys():
+		if not excluded_settings.has(setting):
+			set_label_text(setting)
+	$SettingsContainer/Reset.set_text("Reset to Defaults")
+	$SettingsContainer/Controls.set_text("Controls")
+	$SettingsContainer/Back.set_text("Back")
 
+## Sets and updates the text on a button based on its
+## setting name and type in the dict.
+func set_label_text(setting: String):
+	for key in dict.keys():
+		if setting == key:
+			var append: String = ": "
+			if dict[setting].section == "volume":
+				append += str(round(dict[setting].value * 100)) + "%"
+			elif dict[setting].type == TYPE_BOOL:
+				append += str(bool_to_on_off(dict[setting].value))
+			elif dict[setting].type == TYPE_FLOAT:
+				append += str(dict[setting].value) + "x"
+			# Add enum handling here
+			# If you add a generic TYPE_INT setting,
+			# add it *after* the enums
+			elif setting == "fps_display":
+				match dict[setting].value:
+					GLOBAL_SETTINGS.FpsDisplay.OFF:
+						append += "Off"
+					GLOBAL_SETTINGS.FpsDisplay.LAG_ONLY:
+						append += "Lag Only"
+					GLOBAL_SETTINGS.FpsDisplay.ALWAYS_ON:
+						append += "Always On"
+			elif setting == "titlebar_stats":
+				match dict[setting].value:
+					GLOBAL_SETTINGS.TitlebarStats.OFF:
+						append += "Off"
+					GLOBAL_SETTINGS.TitlebarStats.TIME:
+						append += "Time"
+					GLOBAL_SETTINGS.TitlebarStats.DEATHS:
+						append += "Deaths"
+					GLOBAL_SETTINGS.TitlebarStats.ALL:
+						append += "All"
 
-# When leaving the settings menu, saves values to the global settings file
+			var formatted_name = GLOBAL_SETTINGS.formatted[setting]
+			$SettingsContainer.get_node(formatted_name).set_text(
+				formatted_name + append
+			)
+			return
+	print_debug("Setting " + setting + " not found")
+
+## When leaving the settings menu, saves values to the global settings file.
 func save_on_exit():
-	
-	# Updating the global settings file
-	GLOBAL_SETTINGS.set_setting("music_volume", music_volume)
-	GLOBAL_SETTINGS.set_setting("sound_volume", sound_volume)
-	GLOBAL_SETTINGS.set_setting("zoom_scaling", zoom_scaling)
-	GLOBAL_SETTINGS.set_setting("hud_scaling", HUD_scaling)
-	GLOBAL_SETTINGS.set_setting("autoreset", autoreset_on)
-	GLOBAL_SETTINGS.set_setting("extra_keys", extra_keys_on)
-	
-	# Sets HUD scaling by calling objHUDs method once
-	if is_instance_valid(objHUD):
-		objHUD.set_HUD_scaling()
-	
-	# Saving (includes fullscreen, vsync, and window scale,
-	# but we don't need to set them from here again)
+	# Since this menu updates the settings object directly,
+	# with all side effects taking place there,
+	# we don't need to do anything but save the file.
 	GLOBAL_SETTINGS.save_settings()
 
 
 # Sets the values back to their default ones (menu settings first, then global
 # settings)
 func reset_settings_to_default():
-	music_volume = 1.0
-	sound_volume = 1.0
-	fullscreen_on = false
-	zoom_scaling = 1.0
-	HUD_scaling = 1.0
-	window_scaling = 1.0
-	vsync_on = true
-	autoreset_on = false
-	extra_keys_on = false
-	
-	GLOBAL_SETTINGS.default_settings()
+	if excluded_settings.size() == 0:
+		GLOBAL_SETTINGS.default_settings()
+	else:
+		# Iterate through all non-excluded settings
+		for setting in dict.keys():
+			if not setting in excluded_settings:
+				GLOBAL_SETTINGS.reset_setting(setting)
 
 
 # Replaces "true/false" for "on/off". Easier to read and understand

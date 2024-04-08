@@ -46,7 +46,6 @@ song_id = ExtResource("4_t1nch")
 position = Vector2(400, 304)
 
 [node name="Camera2D" type="Camera2D" parent="Environment/cameraAnchor"]
-process_callback = 0
 limit_top = 0
 limit_bottom = 704
 limit_smoothed = true

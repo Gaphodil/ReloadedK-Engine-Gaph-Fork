@@ -5,7 +5,6 @@ var item_text: String = ""
 @onready var item_container: Node = $Display/MarginContainer2
 @onready var container_timer: Node = $Display/MarginContainer2/Timer
 @onready var fps_container: Node = $Display/MarginContainer3
-@onready var fps_setting: GLOBAL_SETTINGS.FpsDisplay = GLOBAL_SETTINGS.get_setting("fps_display")
 var fps_fadeout_amt: float = -1.0
 
 func _ready():
@@ -68,6 +67,9 @@ func _on_timer_timeout():
 # Shows the FPS in the HUD.
 func handle_fps_indic(delta):
 	fps_container.set_visible(false)
+	var fps_setting: GLOBAL_SETTINGS.FpsDisplay = (
+		GLOBAL_SETTINGS.get_setting("fps_display")
+	)
 	if not fps_setting == GLOBAL_SETTINGS.FpsDisplay.OFF:
 		var fps = Engine.get_frames_per_second()
 		var label = fps_container.get_child(0)
@@ -101,4 +103,6 @@ func handle_fps_indic(delta):
 			fps_container.modulate.a = 1.0 - lerpf(0.0, 1.0, fps_fadeout_amt)
 			if fps_fadeout_amt >= 1.0:
 				fps_fadeout_amt = -1.0
+	else:
+		fps_fadeout_amt = -1.0
 
