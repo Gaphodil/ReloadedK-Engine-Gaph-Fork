@@ -236,7 +236,7 @@ func reset_settings_to_default():
 	fullscreen_on = false
 	zoom_scaling = 1.0
 	HUD_scaling = 1.0
-	window_scaling = GLOBAL_SETTINGS.DEFAULT_WINDOW_SCALING
+	window_scaling = 1.0
 	vsync_on = true
 	autoreset_on = false
 	extra_keys_on = false
