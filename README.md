@@ -19,13 +19,14 @@ You can check the [engine's documentation](https://github.com/ReloadedK-git/Relo
 
 # Changelog
 
-### v1.11 (TBA)
+### v1.11 (2024-04-09)
 
 * Redesign `scrGlobalSettings` from hardcoded variables to a dictionary
     * Helper functions are added to discourage direct editing of dict values
 * Rework `scrMenuSettings`:
     * Options are generated automatically from the global settings
     * Values are changed directly instead of being assigned at menu close
+* Added docstrings to most scripts
 
 ### v1.10 (2024-04-07)
 
