@@ -33,8 +33,8 @@ func _ready():
 
 
 
-# This function loops through the 8 audioStreamPlayer nodes, gets one that's 
-# not on use, assigns it the sound we want and then plays it
+## Loop through the 8 [AudioStreamPlayer]s and assigns the given sound
+## to the first available bus.
 func play_sound(sound) -> void:
 	for audioStreamPlayers in audioPlayers.get_children():
 		if not audioStreamPlayers.playing:
@@ -43,8 +43,8 @@ func play_sound(sound) -> void:
 			break
 
 
-# Loops through the 8 audioStreamPlayer nodes, gets ones being used to play
-# the sound "sound" and stops it
+## Loop through the 8 [AudioStreamPlayer]s to find the one assigned
+## the given sound, and stops it from playing.
 func stop_sound(sound) -> void:
 	for audioStreamPlayers in audioPlayers.get_children():
 		if audioStreamPlayers.get_stream() == sound:

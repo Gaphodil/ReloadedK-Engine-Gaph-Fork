@@ -3,11 +3,23 @@ extends Node
 """
 Public variables, meant to be accessed and modified outside of this script
 """
+## If [code]true[/code], the game is in debug mode.
 var debug_mode: bool = false
+
+## If [code]true[/code], the player has touched a warp to a different room.
+## This prevents the position from loading a save being applied to the wrong room.
 var is_changing_rooms: bool = false
+
+## If [code]true[/code], the game is paused. Nodes must have their
+## [member Node.process_mode] changed if they want operate during a paused game.
 var game_paused: bool = false
+
+## Currently unused.
 var can_save_collectable: bool = false
+
+## Time played. Increases when not in menus or paused.
 var time: float = 0.0
+## Death count. Increases when the player dies, naturally.
 var deaths: int = 0
 
 # This fixes some issues with collision detection on moving platforms
@@ -18,10 +30,17 @@ var player_bullet_damage: int = 1
 # var player_sword_damage: int = 4
 
 # Global arrays
+## An array of IDs for activated triggers and multiTriggers.
+## Cleared on reset or quit to main menu.
+## If something depends on a trigger, it should check this array for an ID.
 var triggered_events: Array = []
+## An array of IDs for activated dialog events.
+## Only gets cleared on exit to main menu, so dialogs
+## play only once per session.
 var dialog_events: Array = []
 
-# For moving the player to a specific position after warping to a different room
+## The specific position a player will move to after warping to a different room.
+## Normally set by a warp object.
 var warp_to_point: Vector2 = Vector2.ZERO
 
 
@@ -106,7 +125,8 @@ func _input(event):
 
 
 
-# A global pause which adds/removes a pause menu instance
+## A global pause which adds a pause menu instance.
+## Unpausing is handled by the menu itself.
 func pause_game() -> void:
 	
 	# As long as we're not on menu rooms
@@ -121,14 +141,14 @@ func pause_game() -> void:
 			GLOBAL_SOUNDS.play_sound(GLOBAL_SOUNDS.sndPause)
 
 
-# Toggles fullscreen on/off. When toggled from fullscreen to windowed, it
-# remembers the initial width/height and sets its initial position (centered)
+## Toggles fullscreen on/off. When toggled from fullscreen to windowed, it
+## reapplies the window scaling to the initial window size.
 func toggle_fullscreen() -> void:
 	GLOBAL_SETTINGS.flip_setting("fullscreen")
 	GLOBAL_SETTINGS.set_window_mode()
 
 
-# A full game restart. Goes back to the main menu
+## Performs the necessary cleanup and returns to the main menu.
 func full_game_restart() -> void:
 	if is_valid_room():
 		
@@ -162,21 +182,21 @@ func full_game_restart() -> void:
 		GLOBAL_SAVELOAD.itemsGameData.clear()
 
 
-# Toggles debug mode on/off. 
-# Debug mode affects objPlayer, making it invincible and able to get teleported
-# to the mouse with a special key. Also affect objHUD, which will draw some
-# debug data and show a sprite on the mouse position, indicating that objPlayer
-# can get teleported. Check objPlayer's debug_mouse_teleport() method
+## Toggles debug mode on/off. [br]
+## Debug mode affects [code]objPlayer[/code], making it invincible and able to get teleported
+## to the mouse with a special key. Also affects [code]objHUD[/code], which will draw some
+## debug data and show a sprite on the mouse position, indicating that the player
+## can get teleported. Refer to [method scrPlayer.debug_mouse_teleport]
 func toggle_debug_mode() -> void:
 	debug_mode = !debug_mode
 
 
-# Pauses music using a keyboard shortcut
+## Pauses music using a keyboard shortcut
 func pause_music() -> void:
 	music_is_playing = !music_is_playing
 
 
-# The "R" key. Resets the game if certain conditions are met
+## The "R" key. Checks if the player can reset, and calls [method reset] if so.
 func handle_resetting() -> void:
 	
 	# We check what room we're in, to not reset inside of menus
@@ -199,8 +219,8 @@ func handle_resetting() -> void:
 		reset()
 
 
-# Conditionless reset. Call this to reset directly, without any kind of
-# previous requirement (other than a savefile to read from)
+## Conditionless reset. Call this to reset directly, without any kind of
+## previous requirement (other than a savefile to read from).
 func reset():
 	
 	# A reset is essentially taking the main tree scene and then changing
@@ -222,23 +242,13 @@ func reset():
 	GLOBAL_SAVELOAD.itemsGameData.clear()
 
 
-# Fully quits the game (alt + F4)
+## Fully quits the game (alt + F4).
 func game_quit() -> void:
 	get_tree().quit()
 
 
-# Sets vsync. Called from the settings menu
-func set_vsync():
-	GLOBAL_SETTINGS.flip_setting("vsync")
-	GLOBAL_SETTINGS.set_vsync_mode()
-
-# Sets window scale. Called from the settings menu
-func set_window_scale(scaling: float):
-	GLOBAL_SETTINGS.set_setting("window_scaling", scaling)
-	GLOBAL_SETTINGS.set_window_scale()
-
-# Checks the current scene/room's name. We use this to make sure we're not
-# doing things like restarting or pausing on menu related scenes
+## Checks the current scene/room's name. We use this to make sure we're not
+## doing things like restarting or pausing on menu related scenes.
 func is_valid_room():
 	
 	# We also need to check if our scene tree is not null. Only then it gets
@@ -261,10 +271,10 @@ func is_valid_room():
 				return true
 
 
-# Returns a string of text, according to our input device.
-# If we use a keyboard, we remove " (Physical)"
-# If we use a controller, we just change the entire thing because it looks
-# ugly as hell either way. Rebindable controls be damned.
+## Returns a string of text, according to our input device.
+## If we use a keyboard, we remove " (Physical)".
+## If we use a controller, we just change the entire thing because it looks
+## ugly as hell either way. Rebindable controls be damned.
 func get_input_name(button_id, input_device):
 	
 	# Keyboard
@@ -276,21 +286,21 @@ func get_input_name(button_id, input_device):
 		return str(InputMap.action_get_events(button_id)[input_device].as_text().trim_prefix("Joypad ").left(9).trim_suffix(" "))
 
 
-# Stops the HUD from showing the item/collectable
+## Stops the HUD from showing the item/collectable.
 func reset_HUD() -> void:
 	if is_instance_valid(objHUD):
 		objHUD.container_timer.stop()
 		objHUD.item_container.set_visible(false)
 
 
-# Global time counter
+## Increments the global time counter.
 func time_counter(delta):
 	if !game_paused and is_valid_room():
 			time += delta
 	
 
 
-# Takes a time parameter and returns it as a formatted string
+## Takes a time parameter and returns it as a formatted string.
 func format_time(time_to_format):
 	
 	var hours   = floor((time_to_format / 60) / 60);

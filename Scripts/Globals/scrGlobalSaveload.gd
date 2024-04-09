@@ -1,6 +1,7 @@
 extends Node
 
 # Saving and loading goes here
+## The currently selected save file. Assigned by [code]scrMenuFiles[/code].
 var saveFileID: int = 1
 const DATA_PATH: = "user://Data/Save"
 
@@ -27,12 +28,12 @@ const defaultGameData = {
 	"total_deaths" : 0
 }
 
-# This is the data we can read and write. By default, it's just a copy of
-# the default game data dictionary, but we will modify this later on, and
-# then we'll read from those existing files.
+## This is the data we can read and write. [br]
+## By default, it's just a copy of the default game data dictionary,
+## but we will modify, save, and load to this.
 var variableGameData = defaultGameData
 
-# Dictionary for items and collectables. Empty by default
+## Dictionary for storing unsaveditems and collectables. Empty by default.
 var itemsGameData = {}
 
 
@@ -54,8 +55,8 @@ func _ready():
 
 
 
-# Loads a save file (1, 2 or 3, depends on saveFileID), and if it doesn't
-# exist (is "null"), creates a save file with default data
+## Loads the save file at [member saveFileID]. If the file is
+## [code]null[/code], creates a new save file with default data.
 func load_data():
 	
 	# Reads the save file
@@ -74,9 +75,9 @@ func load_data():
 	file = null
 
 
-# Saves data on a file (1, 2 or 3, depends on saveFileID).
-# This is the function you use when you want to save in-game data, but the
-# contents of variableGameData are set/handled somewhere else
+## Saves data to the file at [member saveFileID].
+## This is the function you use when you want to save in-game data, but the
+## contents of [member variableGameData] are handled elsewhere.
 func save_data():
 	var file = FileAccess.open_encrypted_with_pass(DATA_PATH + str(saveFileID) + ".save", FileAccess.WRITE, SAVE_PASSWORD_STRING)
 	file.store_var(variableGameData)
@@ -85,8 +86,8 @@ func save_data():
 	file = null
 
 
-# Saves data on a file (1, 2 or 3, depends on saveFileID).
-# Only used when creating a new save file
+## Saves the default data to the file at [member saveFileID].
+## Only used when creating a new save file.
 func save_default_data():
 	var file = FileAccess.open_encrypted_with_pass(DATA_PATH + str(saveFileID) + ".save", FileAccess.WRITE, SAVE_PASSWORD_STRING)
 	file.store_var(defaultGameData)
@@ -101,8 +102,7 @@ func save_default_data():
 	file = null 
 
 
-# Deletes save data after checking if such files exist (both savefiles and save
-# previews/screenshots)
+## Safely deletes save data (both savefiles and previews/screenshots).
 func delete_data():
 	var dir = DirAccess.open("user://")
 	
@@ -113,18 +113,19 @@ func delete_data():
 		dir.remove(DATA_PATH + str(saveFileID) + ".png")
 
 
-# Takes a screenshot and resizes it. Made to be shown on the main menu screen.
-# You should tell this autoload to take screenshots when you want it to and
-# not automatically, for more control (e.g. on objSavePoint when saving)
+## Takes a screenshot and resizes it. Made to be shown on the main menu screen.
 func take_screenshot() -> void:
+	# You should tell this autoload to take screenshots when you want it to and
+	# not automatically, for more control (e.g. on objSavePoint when saving)
 	var img = get_viewport().get_texture().get_image()
 	img.resize(SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT, Image.INTERPOLATE_NEAREST)
 	img.save_png(DATA_PATH + str(saveFileID) + ".png")
 	return ImageTexture.create_from_image(img)
 
 
-# Saves the player's coordinates, sprite state and room name. Also takes a
-# screenshot. This is what you use for saving the game normally
+## Saves the player's coordinates, sprite state and room name; also takes a
+## screenshot for the file select. [br]
+## This is the normal method for saving the game.
 func save_game(save_position = true) -> void:
 	if is_instance_valid(GLOBAL_INSTANCES.objPlayerID) && save_position:
 		variableGameData.player_x = GLOBAL_INSTANCES.objPlayerID.position.x
@@ -138,11 +139,11 @@ func save_game(save_position = true) -> void:
 	save_data()
 
 
-# A way to check if a savefile is "up to date".
-# It opens a savefile if it exists and reads its dictionary. If any key is
-# missing, it takes it from defaultSaveData and saves it on top (without
-# messing with other keys).
-# This makes older savefiles compatible with newer ones
+## A way to check if a savefile is "up to date". [br]
+## It opens a savefile if it exists and reads its dictionary. If any key is
+## missing, it takes it from defaultSaveData and saves it on top (without
+## messing with other keys).
+## This makes older savefiles compatible with newer ones.
 func check_savefiles_and_update():
 	
 	# If a savefile exists (Save1, Save2, Save3), we open it and check its
@@ -168,8 +169,8 @@ func check_savefiles_and_update():
 				file_save = null
 
 
-# Merges the itemsGameData dictionary with variableGameData and clears
-# itself afterwards
+## Merges [member itemsGameData] into [member variableGameData], then
+## clears the item data.
 func merge_items_data():
 	
 	# Checks if there's something to merge first

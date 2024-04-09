@@ -1,7 +1,11 @@
 extends AudioStreamPlayer
 
+## The ID of the song currently playing.
 var song_playing: AudioStream = null
+## The ID of the song that should be playing.
+## Set by [code]objMusicPlayer[/code].
 var song_id: AudioStream = null
+
 var loop_start: float = 0.0
 var loop_end: float = 0.0
 
@@ -25,9 +29,10 @@ func _physics_process(_delta):
 
 
 
-# Checks if song_playing is the same as song_id. If this is the case, then its
-# song_playing value gets replaced and streamed. If we warp to a different room
-# with the same song_id, it keeps playing the same song and doesn't reset it
+## Checks if [member song_playing] is the same as [member song_id]. If this is the
+## case, then [member song_playing] value gets replaced and streamed. [br]
+## If we warp to a different room with the same [member song_id],
+## it keeps playing the same song without restarting.
 func music_update_and_play() -> void:
 	if song_playing != song_id:
 		song_playing = song_id
@@ -37,8 +42,9 @@ func music_update_and_play() -> void:
 		play()
 
 
-# If we set a loop end position from objMusicPlayer, we then set the playback
-# position once we reach the loop end position, and loop between those points
+## If we set a loop end position from [code]objMusicPlayer[/code], we then set
+## the playback position once we reach the loop end position, and loop between
+## those points.
 func set_loop_positions():
 	if loop_end != 0.0:
 		if get_playback_position() > loop_end:
