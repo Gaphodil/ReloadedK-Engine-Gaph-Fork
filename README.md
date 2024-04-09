@@ -19,11 +19,14 @@ You can check the [engine's documentation](https://github.com/ReloadedK-git/Relo
 
 # Changelog
 
+### v1.12 (TBA)
+* Allowed HUD to update while paused, primarily for FPS display
+
 ### v1.11 (2024-04-09)
 
-* Redesign `scrGlobalSettings` from hardcoded variables to a dictionary
+* Redesigned `scrGlobalSettings` from hardcoded variables to a dictionary
     * Helper functions are added to discourage direct editing of dict values
-* Rework `scrMenuSettings`:
+* Reworked `scrMenuSettings`:
     * Options are generated automatically from the global settings
     * Values are changed directly instead of being assigned at menu close
 * Added docstrings to most scripts
@@ -32,7 +35,7 @@ You can check the [engine's documentation](https://github.com/ReloadedK-git/Relo
 
 * Added window scaling, FPS display, and death/time stats in window title
 * Have `objPlayer` emit signals on certain actions
-* Refactor `objJumpSwitchSpike` to be one object with four directions, and swap on player jump signals rather than jump keypress
+* Refactored `objJumpSwitchSpike` to be one object with four directions, and swap on player jump signals rather than jump keypress
 
 <details>
 <summary>Original changelog (in reverse chronological order)</summary>

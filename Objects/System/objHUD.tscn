@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://dd3vx3fvdxdrh" path="res://Graphics/Sprites/Player/sprPlayerIdle.png" id="3_ncdqv"]
 
 [node name="objHUD" type="Control"]
+process_mode = 3
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_mo0wy")
@@ -97,6 +98,7 @@ autowrap_mode = 2
 clip_text = true
 
 [node name="Timer" type="Timer" parent="Display/MarginContainer2"]
+process_mode = 1
 process_callback = 0
 wait_time = 5.0
 one_shot = true
