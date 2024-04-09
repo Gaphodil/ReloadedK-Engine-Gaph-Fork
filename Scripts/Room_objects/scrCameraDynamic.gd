@@ -51,18 +51,19 @@ func _ready():
 
 
 # Updates the camera target
-func _physics_process(_delta):
+func _physics_process(delta):
 	
 	# Godot's "instance_exists"
 	# Gets objPlayer's position, stores it on a local variable, follows it while
 	# adding some linear interpolation
+	var weight: float = GLOBAL_GAME.frame_to_delta(focus_speed, delta)
 	if is_instance_valid(target_node):
 		get_xy = target_node.position
-		position = lerp(position, target_node.position, focus_speed)
+		position = lerp(position, target_node.position, weight)
 	else:
 		
 		# If the player no longer exists, it gets the values of the variable
 		# get_xy, which no longer updates, but it still stored the player's
 		# last position, so we continue lerping to it
-		position = lerp(position, get_xy, focus_speed)
+		position = lerp(position, get_xy, weight)
 	

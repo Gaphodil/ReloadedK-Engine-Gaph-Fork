@@ -19,12 +19,14 @@ func _ready():
 	elif (looking_at == -1):
 		bullet_direction.x = -bullet_speed
 
-func _physics_process(_delta):
+func _physics_process(delta):
 	
 	# We first check if the bullet can move (is not colliding with a wall).
 	# If it can, move and check for future collisions
 	if (is_moving == true):
-		var collision = move_and_collide(bullet_direction)
+		var collision = move_and_collide(
+			GLOBAL_GAME.frame_to_delta(bullet_direction, delta)
+		)
 		
 		# If we collided with something, 2 things can happen:
 		# 1) The object we collided with has a method called "react_to_hit"

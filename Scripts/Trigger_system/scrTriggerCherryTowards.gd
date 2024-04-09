@@ -9,7 +9,7 @@ var triggered: bool = false
 
 
 
-func _physics_process(_delta):
+func _physics_process(delta):
 	
 	# We check if our speed is not 0
 	if (speed != 0):
@@ -29,7 +29,7 @@ func _physics_process(_delta):
 				# Since we want this object to move towards a direction once
 				# and not every frame, we use the triggered variable to do it.
 				# Otherwise the direction vector would update constantly
-				move_and_collide(direction * speed)
+				move_and_collide(direction * GLOBAL_GAME.frame_to_delta(speed, delta))
 
 
 # Destroys itself when outside of the view

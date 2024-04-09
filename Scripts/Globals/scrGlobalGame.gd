@@ -325,3 +325,13 @@ func handle_titlebar():
 	if setting == GLOBAL_SETTINGS.TitlebarStats.DEATHS or setting == GLOBAL_SETTINGS.TitlebarStats.ALL:
 		title += deaths_str
 	get_window().title = title
+
+# Brief helper function for converting frame timing to delta timing.
+# Could fit in a dedicated global for helper functions, but placed here for now.
+## Given some x per frame and a delta, returns x based on time instead of frames.
+func frame_to_delta(per_frame: Variant, delta: float):
+	# Mathematically:
+	#   physics = expected frames per second (fps)
+	#   delta = actual seconds per frame (spf)
+	#   dist = speed per frame * expected fps * actual spf
+	return per_frame * Engine.get_physics_ticks_per_second() * delta

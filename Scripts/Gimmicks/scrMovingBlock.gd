@@ -14,7 +14,7 @@ func _ready():
 		$playerDetector.queue_free()
 
 
-func _physics_process(_delta):
+func _physics_process(delta):
 	
 	# We only check this condition if our move_speed vector is zero. Makes sure
 	# we don't get any errors if we don't have any shapecast2d detection
@@ -43,7 +43,9 @@ func _physics_process(_delta):
 			# move_and_collide(), re-enabling sync_to_physics and using the values 
 			# it returned later on.
 			set_sync_to_physics(false);
-			var collision_check = move_and_collide(move_speed / 2, true, 0.04);
+			var collision_check = move_and_collide(
+				GLOBAL_GAME.frame_to_delta(move_speed, delta) / 2, true, 0.04
+			);
 			
 			# Re-enable sync_to_physics
 			set_sync_to_physics(true);
@@ -61,9 +63,8 @@ func _physics_process(_delta):
 				if (collision_interaction == 3):
 					move_speed = -move_speed
 			
-			# Manually adds to the speed. We don't use delta because writting "2"
-			# is much easier than writting "120"
-			position += move_speed
+			# Manually adds to the speed.
+			position += GLOBAL_GAME.frame_to_delta(move_speed, delta)
 	else:
 		
 		# If our interaction is set to stop, it should also snap perfectly

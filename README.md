@@ -19,8 +19,10 @@ You can check the [engine's documentation](https://github.com/ReloadedK-git/Relo
 
 # Changelog
 
-### v1.12 (TBA)
+### v1.12 (2024-04-09)
+
 * Allowed HUD to update while paused, primarily for FPS display
+* Changed delta-agnostic per-frame changes to be deltatime-based instead
 
 ### v1.11 (2024-04-09)
 

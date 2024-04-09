@@ -17,7 +17,7 @@ var acceleration_multiplier: float = 0.01
 
 
 
-func _physics_process(_delta):
+func _physics_process(delta):
 	
 	# We check if our speed is not 0
 	if (acceleration != 0):
@@ -30,7 +30,9 @@ func _physics_process(_delta):
 			
 			if is_instance_valid(GLOBAL_INSTANCES.objPlayerID):
 				direction = position.direction_to(GLOBAL_INSTANCES.objPlayerID.position)
-				orbit_velocity += (direction * (acceleration * acceleration_multiplier))
+				orbit_velocity += GLOBAL_GAME.frame_to_delta(
+					(direction * (acceleration * acceleration_multiplier)), delta
+				)
 				
 #				var orbit_velocity_max = orbit_velocity.clamp(Vector2(-max_acceleration, -max_acceleration), Vector2(max_acceleration, max_acceleration))
 				# Since we want this object to move towards a direction once

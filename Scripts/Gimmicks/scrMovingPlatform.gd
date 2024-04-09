@@ -4,7 +4,7 @@ extends AnimatableBody2D
 @export var move_speed: Vector2 = Vector2.ZERO
 
 
-func _physics_process(_delta):
+func _physics_process(delta):
 	if (move_speed != Vector2.ZERO):
 		
 		# Godot will complain about physics bodies using move_and_collide() 
@@ -13,7 +13,9 @@ func _physics_process(_delta):
 		# move_and_collide(), re-enabling sync_to_physics and using the values 
 		# it returned later on.
 		set_sync_to_physics(false);
-		var collision_check = move_and_collide(move_speed / 2, true);
+		var collision_check = move_and_collide(
+			GLOBAL_GAME.frame_to_delta(move_speed, delta) / 2, true
+		);
 		
 		# Re-enable sync_to_physics
 		set_sync_to_physics(true);
@@ -24,5 +26,5 @@ func _physics_process(_delta):
 			move_speed = -move_speed
 		
 		# Change local position directly
-		position += move_speed
+		position += GLOBAL_GAME.frame_to_delta(move_speed, delta)
 		

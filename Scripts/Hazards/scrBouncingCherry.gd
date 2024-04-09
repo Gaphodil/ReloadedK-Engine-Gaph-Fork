@@ -3,14 +3,16 @@ extends CharacterBody2D
 ## The distance moved per frame.
 @export var move_speed: Vector2 = Vector2.ZERO
 
-func _physics_process(_delta):
+func _physics_process(delta):
 	
 	# If the object has no speed, we don't need to process anything else
 	if (move_speed != Vector2.ZERO):
 	
 		# We run move_and_collide each physics frame, also assigning it to the
 		# object_collision local variable
-		var object_collision = move_and_collide(move_speed)
+		var object_collision = move_and_collide(
+			GLOBAL_GAME.frame_to_delta(move_speed, delta)
+		)
 		
 		# If there's a collision, we then bounce move_speed using the collision
 		# normal, which means it will bounce horizontally or vertically

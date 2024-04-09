@@ -7,12 +7,12 @@ var coin_animation: bool = false
 
 # Plays a short animation (moves up, pauses the sprite animation, fades the 
 # sprite). Also disables the collision shape
-func _physics_process(_delta):
+func _physics_process(delta):
 	if coin_animation:
 		$Area2D/CollisionShape2D.disabled = true
 		$AnimatedSprite2D.pause()
-		position.y -= 0.5
-		modulate.a -= 0.05
+		position.y -= GLOBAL_GAME.frame_to_delta(0.5, delta)
+		modulate.a -= GLOBAL_GAME.frame_to_delta(0.05, delta)
 
 
 # When picked by the player, the coin plays a sound, starts the destruction

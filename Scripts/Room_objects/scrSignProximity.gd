@@ -21,7 +21,7 @@ func _ready():
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _physics_process(_delta):
+func _physics_process(delta):
 	if not Engine.is_editor_hint():
 		
 		# Enables and disables visuals and functions if outside of view
@@ -32,10 +32,10 @@ func _physics_process(_delta):
 			
 			if player_is_colliding == true:
 				if text_alpha < 1:
-					text_alpha += alpha_amount
+					text_alpha += GLOBAL_GAME.frame_to_delta(alpha_amount, delta)
 			else:
 				if text_alpha > 0:
-					text_alpha -= alpha_amount * 2
+					text_alpha -= GLOBAL_GAME.frame_to_delta(alpha_amount, delta) * 2
 			
 			text_label.self_modulate = Color(1.0, 1.0, 1.0, text_alpha)
 	else:

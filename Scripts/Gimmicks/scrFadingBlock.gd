@@ -4,20 +4,19 @@ extends StaticBody2D
 @export var fading_time: float = 1.0
 var reset_seconds: float = 4.0
 var is_fading: bool = false
-var fading_alpha: float = 0.016
 
 @onready var block_sprite: Node = get_node("Sprite2D")
 @onready var timer_node: Node = get_node("Timer")
 
 
 
-func _physics_process(_delta):
+func _physics_process(delta):
 	if is_fading:
 		
 		# Reduces alpha from sprite. If entirely transparent, disables its
 		# collision shape
 		if block_sprite.get_self_modulate().a > 0:
-			block_sprite.self_modulate.a -= (fading_alpha / fading_time)
+			block_sprite.self_modulate.a -= delta / fading_time
 		else:
 			$CollisionShape2D.set_disabled(true)
 		
