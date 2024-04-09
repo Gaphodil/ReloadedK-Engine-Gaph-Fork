@@ -1,5 +1,6 @@
 extends StaticBody2D
 
+## The positive upward velocity that the player will bounce.
 @export var bounce_amount: int = 400
 @onready var anim_node: Node = get_node("AnimatedSprite2D")
 var collision_distance: int = -4

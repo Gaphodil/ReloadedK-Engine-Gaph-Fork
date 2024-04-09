@@ -1,5 +1,6 @@
 extends StaticBody2D
 
+## The time in seconds it takes the block to fade.
 @export var fading_time: float = 1.0
 var reset_seconds: float = 4.0
 var is_fading: bool = false

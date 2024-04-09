@@ -1,6 +1,8 @@
 extends AnimatableBody2D
 
+## The distance moved per frame.
 @export var speed: int = 0
+## The cherry moves while this trigger is active.
 @export var trigger_id: int = 0
 var direction: Vector2 = Vector2.ZERO
 var triggered: bool = false

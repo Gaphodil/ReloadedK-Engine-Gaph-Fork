@@ -1,6 +1,6 @@
 extends Node2D
 
-# You can give your item any name you want, as long as you don't repeat them
+## The name of the item. Can be anything, as long as it's not repeated.
 @export var item_name: String
 var wave_time: float = 0.0
 var wave_amplitude: float = 0.8

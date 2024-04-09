@@ -1,7 +1,13 @@
 extends Node2D
 
+## The ID of the song to play.
 @export var song_id: AudioStream = null
+
+## If [member loop_end] is not [code]0.0[/code], then the song will loop to
+## this point (in seconds) when it reaches the end.
 @export var loop_start: float = 0.0
+## Loops the song to [member loop_start] when this point (in seconds)
+## is reached. Does nothing if equal to [code]0.0[/code].
 @export var loop_end: float = 0.0
 
 

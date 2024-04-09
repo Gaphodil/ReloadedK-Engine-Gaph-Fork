@@ -1,5 +1,6 @@
 extends Camera2D
 
+## The node tracked by the camera.
 @export var target_node: Node = null
 
 # Zoom related variables. You can ignore the global zoom from the settings and

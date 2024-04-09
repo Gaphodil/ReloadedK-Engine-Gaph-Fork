@@ -1,5 +1,6 @@
 extends AnimatableBody2D
 
+## The distance moved per frame.
 @export var move_speed: Vector2 = Vector2.ZERO
 @export_enum("None:1", "Stop:2", "Bounce:3") var collision_interaction: int = 1
 var start_moving: bool = false

@@ -1,6 +1,7 @@
 extends Control
 
 @export var item_sprite: CompressedTexture2D
+## The name of an existing [code]objCollectableItem[/code].
 @export var item_name: String
 @export_multiline var item_description: String
 

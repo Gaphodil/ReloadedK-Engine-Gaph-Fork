@@ -1,5 +1,6 @@
 extends Node2D
 
+## When all coins are collected, this scene will be destroyed.
 @export var scene_to_destroy: Node
 var coin_animation: bool = false
 

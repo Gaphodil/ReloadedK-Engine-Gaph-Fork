@@ -1,5 +1,6 @@
 extends Camera2D
 
+## The node tracked by the camera.
 @export var target_node: Node = null
 @export var scrolling_speed: int = 10
 

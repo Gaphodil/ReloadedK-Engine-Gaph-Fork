@@ -1,14 +1,18 @@
 extends Node2D
 
-# The path to the level scene. It's an exported path, so simply select it from
-# the scene/room editor
-# You should NOT use an exported PackedScene. It looks and feels better, but it
-# doesn't allow for cyclic referencing, meaning if you warp from a to b and
-# then return to a from b, godot will either crash or return an error. 
-# Will probably get fixed on future versions of Godot (hopefully)
+## The path to the level scene. It's an exported path, so simply select it from
+## the scene/room editor. [br]
+## You should NOT use an exported [PackedScene]. It looks and feels better, but it
+## doesn't allow for cyclic referencing, meaning if you warp from a to b and
+## then return to a from b, Godot will either crash or return an error. 
+## Will probably get fixed on future versions of Godot (hopefully).
 @export_file("*.tscn") var warp_to: String = ""
+
+## If [code]true[/code], a visual effect will play.
 @export var warp_transition: bool = false
+## The coordinate position the player should warp to in the next scene.
 @export var warp_to_point: Vector2 = Vector2.ZERO
+
 var is_warping: bool = false
 
 

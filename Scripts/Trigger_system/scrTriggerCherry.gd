@@ -1,6 +1,7 @@
 extends AnimatableBody2D
 
 @export var velocity: Vector2 = Vector2.ZERO
+## The cherry moves while this trigger is active.
 @export var trigger_id: int = 0
 var triggered: bool = false
 

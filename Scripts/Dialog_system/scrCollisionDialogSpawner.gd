@@ -1,7 +1,10 @@
 extends Node2D
 
 @export var dialog_scene: PackedScene = null
+## If a dialog with this ID is shown,
+## it won't be shown again until the game has quit to title.
 @export var dialog_ID: int = 0
+## The [code]GLOBAL_GAME[/code] dialog array, by reference.
 var global_dialog: Array = []
 
 

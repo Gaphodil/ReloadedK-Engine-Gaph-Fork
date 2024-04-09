@@ -1,5 +1,6 @@
 extends ParallaxBackground
 
+## The intensity of the parallax.
 @export var parallax_amount: float = 0.2
 @export var background_size: Vector2 = Vector2(64, 64)
 @export var background_index: CompressedTexture2D

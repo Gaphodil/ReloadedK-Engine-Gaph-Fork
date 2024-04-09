@@ -5,6 +5,7 @@ extends Control
 enum {KEYBOARD, CONTROLLER}
 var input_device = KEYBOARD
 
+## Emitted when the input device swaps between keyboard and controller.
 signal change_input_device
 signal reset_all_inputs
 

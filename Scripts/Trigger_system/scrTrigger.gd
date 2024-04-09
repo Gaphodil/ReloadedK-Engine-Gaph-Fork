@@ -5,12 +5,13 @@ var global_trigger: Array = []
 
 # Defines a trigger value, one to show in the label and then turns it into a
 # string, for visual feedback
+## The ID of this trigger.
 @export var trigger_id: int = 0:
 	set(trigger_property_id):
 		trigger_id = trigger_property_id
 		$Label.text = str(trigger_id)
 
-# For sounds, you probably want to use WAV files
+## The sound effect to play, as a WAV file.
 @export var trigger_sound: AudioStreamWAV = null
 
 

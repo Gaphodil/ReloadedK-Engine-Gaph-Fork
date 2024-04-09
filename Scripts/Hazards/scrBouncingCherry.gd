@@ -1,5 +1,6 @@
 extends CharacterBody2D
 
+## The distance moved per frame.
 @export var move_speed: Vector2 = Vector2.ZERO
 
 func _physics_process(_delta):

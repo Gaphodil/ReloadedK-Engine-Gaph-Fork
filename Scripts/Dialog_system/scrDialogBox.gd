@@ -1,6 +1,9 @@
 extends Control
 
+## The text used in the dialog. Each entry is a new message.
 @export_multiline var dialog: Array[String]
+## The portraits for each dialog entry.
+## The amount should match the amount of text entries.
 @export var portrait: Array[Texture2D]
 @onready var text_node = $CanvasLayer/Panel/RichTextLabel
 @onready var portrait_node = $CanvasLayer/Panel/Sprite2D

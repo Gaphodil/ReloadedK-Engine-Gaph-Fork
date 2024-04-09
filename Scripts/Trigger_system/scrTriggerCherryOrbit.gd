@@ -1,6 +1,8 @@
 extends AnimatableBody2D
 
+## The rate of acceleration towards the player, in hundredths of units.
 @export var acceleration: int = 1
+## The cherry moves while this trigger is active.
 @export var trigger_id: int = 0
 var direction: Vector2 = Vector2.ZERO
 var orbit_velocity: Vector2 = Vector2.ZERO

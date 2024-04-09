@@ -1,6 +1,8 @@
 extends TextureButton
 
+## Which action is being rebound.
 @export_enum("button_left", "button_right", "button_up", "button_down", "button_jump", "button_shoot", "button_reset", "button_pause") var button_action: String = "button_left"
+## The name of the button, to display.
 @export var button_text: String
 @export var menu_node: Node = null
 

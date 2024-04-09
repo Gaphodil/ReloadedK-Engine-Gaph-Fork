@@ -2,10 +2,13 @@
 extends Area2D
 
 var global_trigger: Array = []
+
+## If [code]true[/code], this trigger requires another trigger to be activated first.
 @export var needs_activation: bool = true
 
 # Defines an activation value, one to show in the label and then turns it into
 # a string, for visual feedback
+## The ID of the trigger that activates this one.
 @export var activation_id: int = 0:
 	set(activation_property_id):
 		activation_id = activation_property_id
@@ -13,12 +16,13 @@ var global_trigger: Array = []
 
 # Defines a trigger value, one to show in the label and then turns it into a
 # string, for visual feedback
+## The ID of this trigger.
 @export var trigger_id: int = 0:
 	set(trigger_property_id):
 		trigger_id = trigger_property_id
 		$Label2.text = str(trigger_id)
 
-# For sounds, you probably want to use WAV files
+## The sound effect to play, as a WAV file.
 @export var trigger_sound: AudioStreamWAV = null
 
 

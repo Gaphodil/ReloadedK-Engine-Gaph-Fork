@@ -2,6 +2,7 @@
 extends AnimatableBody2D
 
 var target_position: Vector2 = Vector2.ZERO
+## The block moves while this trigger is active.
 @export var trigger_id: int = 0
 
 var is_snapped: bool = false
