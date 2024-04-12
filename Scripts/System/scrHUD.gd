@@ -22,6 +22,7 @@ func set_HUD_scaling():
 	var hud_scale: float = GLOBAL_SETTINGS.get_setting("hud_scaling")
 	$Display/MarginContainer.scale = Vector2(hud_scale, hud_scale)
 	item_container.scale = Vector2(hud_scale, hud_scale)
+	fps_container.scale = Vector2(hud_scale, hud_scale)
 
 # The debug HUD should only get shown as long as objPlayer exists in the scene,
 # regardless of debug_mode being true or false
@@ -31,6 +32,9 @@ func handle_debug_mode() -> void:
 			$Display/MarginContainer.set_visible(false)
 			$Sprite2D.set_visible(false)
 		else:
+			# Change pivot offset so container stays right aligned
+			# Will jitter if Player text is longer than Room text
+			$Display/MarginContainer.pivot_offset.x = $Display/MarginContainer.size.x
 			$Display/MarginContainer.set_visible(true)
 			$Display/MarginContainer/VBoxContainer/textDebug1.text = str(" Player X: ", round(GLOBAL_INSTANCES.objPlayerID.position.x), " ")
 			$Display/MarginContainer/VBoxContainer/textDebug2.text = str(" Player Y: ", round(GLOBAL_INSTANCES.objPlayerID.position.y), " ")
