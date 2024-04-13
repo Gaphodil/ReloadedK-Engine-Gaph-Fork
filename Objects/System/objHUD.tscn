@@ -63,6 +63,45 @@ theme_override_font_sizes/font_size = 20
 text = "Room Name"
 horizontal_alignment = 2
 
+[node name="textDebug5" type="Label" parent="Display/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_1aw6v")
+theme_override_font_sizes/font_size = 20
+text = "[\\]: Show More"
+horizontal_alignment = 2
+
+[node name="textDebug6" type="Label" parent="Display/MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_1aw6v")
+theme_override_font_sizes/font_size = 20
+text = "[G]odmode"
+horizontal_alignment = 2
+
+[node name="textDebug7" type="Label" parent="Display/MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_1aw6v")
+theme_override_font_sizes/font_size = 20
+text = "[I]nf Jump"
+horizontal_alignment = 2
+
+[node name="textDebug8" type="Label" parent="Display/MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_1aw6v")
+theme_override_font_sizes/font_size = 20
+text = "[H]itbox"
+horizontal_alignment = 2
+
+[node name="textDebug9" type="Label" parent="Display/MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_1aw6v")
+theme_override_font_sizes/font_size = 20
+text = "Sa[v]e"
+horizontal_alignment = 2
+
 [node name="MarginContainer2" type="MarginContainer" parent="Display"]
 anchors_preset = 2
 anchor_top = 1.0
@@ -114,7 +153,6 @@ theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("2_1aw6v")
 theme_override_font_sizes/font_size = 20
 text = "Non-debug FPS"
-clip_text = true
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(1, 1, 1, 0.392157)

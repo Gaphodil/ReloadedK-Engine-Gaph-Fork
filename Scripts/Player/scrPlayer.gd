@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+class_name Player
+
 """
 ---------- VARIABLE DECLARATIONS ---------- 
 """
@@ -21,6 +23,18 @@ var create_bullet := preload("res://Objects/Player/objBullet.tscn")
 var jump_particle := preload("res://Objects/Player/objJumpParticle.tscn")
 @onready var animated_sprite = $playerSprites
 
+var godmode: bool = false
+var inf_jump: bool = false
+
+var debug_godmode: bool = true
+var debug_inf_jump: bool = false
+
+var debug_hitbox: bool = false:
+	set(val):
+		# Visible Colliders is a Debug option in the editor, but not at runtime.
+		debug_hitbox = val
+		$playerMask/ColorRect.visible = val
+
 # Various signals. Only jump and djump are currently used!
 signal player_died
 signal player_jumped
@@ -40,6 +54,10 @@ func _ready():
 	# player does in fact exist and assigns it with its "id"
 	GLOBAL_INSTANCES.objPlayerID = self
 
+	# Loads the debug variables from GLOBAL_GAME
+	debug_inf_jump = GLOBAL_GAME.debug_inf_jump
+	debug_godmode = GLOBAL_GAME.debug_godmode
+	debug_hitbox = GLOBAL_GAME.debug_hitbox
 
 """
 ---------- MAIN LOGIC LOOP ----------
@@ -86,6 +104,8 @@ func _physics_process(delta):
 	move_and_slide()
 	handle_animations()
 
+func _unhandled_key_input(event: InputEvent):
+	handle_debug_keys(event)
 
 
 """
@@ -212,7 +232,7 @@ func handle_jumping() -> void:
 		# jumps with d_jump_speed. Inside of platforms you can jump infinitely,
 		# and they are the ones who set d_jump_aux to true or false.
 		# Same logic applies to water
-		elif (d_jump == true) or (d_jump_aux == true) or (in_water == true):
+		elif d_jump or d_jump_aux or in_water or inf_jump or debug_inf_jump:
 			velocity.y = -d_jump_speed
 			d_jump = false
 			GLOBAL_SOUNDS.play_sound(GLOBAL_SOUNDS.sndDJump)
@@ -437,13 +457,38 @@ func debug_mouse_teleport() -> void:
 		if Input.is_action_pressed("button_debug_teleport"):
 			position = get_global_mouse_position()
 
+## Handles all debug key toggles. Keys are hardcoded.
+func handle_debug_keys(event: InputEvent) -> void:
+	if GLOBAL_GAME.debug_mode:
+		if event is InputEventKey and event.is_pressed() and not event.is_echo():
+			# toggle godmode
+			if event.keycode == KEY_G:
+				GLOBAL_GAME.debug_godmode = not debug_godmode
+				debug_godmode = not debug_godmode
+			# toggle infjump
+			if event.keycode == KEY_I:
+				GLOBAL_GAME.debug_inf_jump = not debug_inf_jump
+				debug_inf_jump = not debug_inf_jump
+			# toggle hitbox view
+			if event.keycode == KEY_H:
+				GLOBAL_GAME.debug_hitbox = not debug_hitbox
+				debug_hitbox = not debug_hitbox
+			# debug save
+			if event.keycode == KEY_V:
+				GLOBAL_SAVELOAD.save_game(true)
+				GLOBAL_SOUNDS.play_sound(GLOBAL_SOUNDS.sndItem)
+
+## Clears all debug variables.
+func reset_debug() -> void:
+	debug_godmode = true
+	debug_inf_jump = false
+	debug_hitbox = false
 
 # Everything that should happen after the player dies
 func on_death():
 	
-	# Death should only happen if we're out of debug mode
-	if (GLOBAL_GAME.debug_mode == false):
-		
+	# Death should only happen if we're not in godmode
+	if not godmode and not debug_godmode:
 		# We load a particle emitter, which does the visual stuff we want
 		var blood_emitter = load("res://Objects/Player/objBloodEmitter.tscn")
 		var blood_emitter_id = blood_emitter.instantiate()

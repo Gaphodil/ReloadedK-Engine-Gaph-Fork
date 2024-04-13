@@ -10,6 +10,17 @@ var manual_frame_counter: Array = []
 var last_four_fps: Array[int] = [120, 120, 120, 120]
 var manual_fps: int = 480
 
+var show_extra_debug: bool = false:
+	set(val):
+		show_extra_debug = val
+		update_extra_label_vis()
+@onready var extra_debug_labels: Dictionary = {
+	"[G]odmode": $Display/MarginContainer/VBoxContainer/textDebug6,
+	"[I]nf Jump": $Display/MarginContainer/VBoxContainer/textDebug7,
+	"[H]itbox": $Display/MarginContainer/VBoxContainer/textDebug8,
+	"Sa[v]e": $Display/MarginContainer/VBoxContainer/textDebug9
+}
+
 ## If this is true, FPS will be calculated every frame
 ## instead of using the Engine value every second.
 var avg_fps: bool = false
@@ -44,6 +55,18 @@ func _physics_process(delta):
 	handle_debug_mode()
 	handle_fps_indic(delta)
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.is_pressed() and not event.is_echo():
+		if event.keycode == KEY_BACKSLASH:
+			show_extra_debug = not show_extra_debug
+
+func update_extra_label_vis():
+	$Display/MarginContainer/VBoxContainer/textDebug5.text = (
+		"[\\]: Show " + ("Less" if show_extra_debug else "More")
+	)
+	for label in extra_debug_labels.values():
+		label.set_visible(show_extra_debug)
+
 func set_HUD_scaling():
 	var hud_scale: float = GLOBAL_SETTINGS.get_setting("hud_scaling")
 	$Display/MarginContainer.scale = Vector2(hud_scale, hud_scale)
@@ -74,6 +97,12 @@ func handle_debug_mode() -> void:
 			$Sprite2D.set_visible(true)
 			$Sprite2D.position = get_global_mouse_position()
 			$Sprite2D.flip_h = !GLOBAL_INSTANCES.objPlayerID.xscale
+
+			if show_extra_debug:
+				var keys := extra_debug_labels.keys()
+				extra_debug_labels[keys[0]].text = keys[0] + ": " + str(GLOBAL_INSTANCES.objPlayerID.debug_godmode)
+				extra_debug_labels[keys[1]].text = keys[1] + ": " + str(GLOBAL_INSTANCES.objPlayerID.debug_inf_jump)
+				extra_debug_labels[keys[2]].text = keys[2] + ": " + str(GLOBAL_INSTANCES.objPlayerID.debug_hitbox)
 	else:
 		$Display/MarginContainer.set_visible(false)
 		$Sprite2D.set_visible(false)

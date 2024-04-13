@@ -5,6 +5,11 @@ Public variables, meant to be accessed and modified outside of this script
 """
 ## If [code]true[/code], the game is in debug mode.
 var debug_mode: bool = false
+# Other debug values
+# Placing here as well as Player to be persistent between resets
+var debug_godmode: bool = true
+var debug_inf_jump: bool = false
+var debug_hitbox: bool = false
 
 ## If [code]true[/code], the player has touched a warp to a different room.
 ## This prevents the position from loading a save being applied to the wrong room.
