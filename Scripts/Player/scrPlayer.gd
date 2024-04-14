@@ -26,7 +26,7 @@ var jump_particle := preload("res://Objects/Player/objJumpParticle.tscn")
 var godmode: bool = false
 var inf_jump: bool = false
 
-var debug_godmode: bool = true
+var debug_godmode: bool = false
 var debug_inf_jump: bool = false
 
 var debug_hitbox: bool = false:
@@ -480,7 +480,7 @@ func handle_debug_keys(event: InputEvent) -> void:
 
 ## Clears all debug variables.
 func reset_debug() -> void:
-	debug_godmode = true
+	debug_godmode = false
 	debug_inf_jump = false
 	debug_hitbox = false
 

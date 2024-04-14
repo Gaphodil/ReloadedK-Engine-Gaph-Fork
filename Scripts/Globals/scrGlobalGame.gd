@@ -7,7 +7,7 @@ Public variables, meant to be accessed and modified outside of this script
 var debug_mode: bool = false
 # Other debug values
 # Placing here as well as Player to be persistent between resets
-var debug_godmode: bool = true
+var debug_godmode: bool = false
 var debug_inf_jump: bool = false
 var debug_hitbox: bool = false
 
