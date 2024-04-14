@@ -55,9 +55,10 @@ func _ready():
 	GLOBAL_INSTANCES.objPlayerID = self
 
 	# Loads the debug variables from GLOBAL_GAME
-	debug_inf_jump = GLOBAL_GAME.debug_inf_jump
-	debug_godmode = GLOBAL_GAME.debug_godmode
-	debug_hitbox = GLOBAL_GAME.debug_hitbox
+	update_debug(GLOBAL_GAME.debug_mode)
+
+	# Connects to the debug_toggled signal
+	GLOBAL_GAME.debug_toggled.connect(update_debug)
 
 """
 ---------- MAIN LOGIC LOOP ----------
@@ -478,11 +479,16 @@ func handle_debug_keys(event: InputEvent) -> void:
 				GLOBAL_SAVELOAD.save_game(true)
 				GLOBAL_SOUNDS.play_sound(GLOBAL_SOUNDS.sndItem)
 
-## Clears all debug variables.
-func reset_debug() -> void:
-	debug_godmode = false
-	debug_inf_jump = false
-	debug_hitbox = false
+## Updates debug variables.
+func update_debug(val: bool) -> void:
+	if val:
+		debug_godmode = GLOBAL_GAME.debug_godmode
+		debug_inf_jump = GLOBAL_GAME.debug_inf_jump
+		debug_hitbox = GLOBAL_GAME.debug_hitbox
+	else:
+		debug_godmode = false
+		debug_inf_jump = false
+		debug_hitbox = false
 
 # Everything that should happen after the player dies
 func on_death():

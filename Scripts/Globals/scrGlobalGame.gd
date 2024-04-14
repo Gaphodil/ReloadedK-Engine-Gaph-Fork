@@ -7,9 +7,11 @@ Public variables, meant to be accessed and modified outside of this script
 var debug_mode: bool = false
 # Other debug values
 # Placing here as well as Player to be persistent between resets
-var debug_godmode: bool = false
+var debug_godmode: bool = true
 var debug_inf_jump: bool = false
 var debug_hitbox: bool = false
+
+signal debug_toggled(value)
 
 ## If [code]true[/code], the player has touched a warp to a different room.
 ## This prevents the position from loading a save being applied to the wrong room.
@@ -194,6 +196,7 @@ func full_game_restart() -> void:
 ## can get teleported. Refer to [method scrPlayer.debug_mouse_teleport]
 func toggle_debug_mode() -> void:
 	debug_mode = !debug_mode
+	debug_toggled.emit(debug_mode)
 
 
 ## Pauses music using a keyboard shortcut
