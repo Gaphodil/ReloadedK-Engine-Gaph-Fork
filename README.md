@@ -19,6 +19,13 @@ You can check the [engine's documentation](https://github.com/ReloadedK-git/Relo
 
 # Changelog
 
+### v1.13 (2024-04-17)
+
+* Added HUD scaling to FPS display
+* Added dev option for estimating FPS per physics frame rather than per second
+* Added additional debug toggles as hardcoded keys in `Player`
+* Fix bug with default `DynamicCamera` limits
+
 ### v1.12 (2024-04-09)
 
 * Allowed HUD to update while paused, primarily for FPS display
