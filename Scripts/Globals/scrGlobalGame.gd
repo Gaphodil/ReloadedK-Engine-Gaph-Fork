@@ -64,13 +64,6 @@ var global_input_device = KEYBOARD
 """
 Private variables, meant to be handled only by this script
 """
-# Window related variables. These don't really change, but can't be constants
-# since they need to get their values first from a couple functions.
-var INITIAL_WINDOW_WIDTH: int = DisplayServer.window_get_size().x
-var INITIAL_WINDOW_HEIGHT: int = DisplayServer.window_get_size().y
-var INITIAL_WINDOW_XPOSITION: int = DisplayServer.window_get_position().x
-var INITIAL_WINDOW_YPOSITION: int = DisplayServer.window_get_position().y
-
 var current_scene_name: String = ""
 var cur_pause_menu: Node = null
 
@@ -153,6 +146,7 @@ func pause_game() -> void:
 func toggle_fullscreen() -> void:
 	GLOBAL_SETTINGS.flip_setting("fullscreen")
 	GLOBAL_SETTINGS.set_window_mode()
+	GLOBAL_SETTINGS.save_settings()
 
 
 ## Performs the necessary cleanup and returns to the main menu.

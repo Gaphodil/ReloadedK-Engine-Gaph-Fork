@@ -12,13 +12,7 @@ var excluded_settings: Array = []
 # Camera handling
 @onready var camera_anchor_node: Node = $Environment/cameraAnchor
 
-signal changed_setting(setting)
-
 func _ready():
-	# Attach listener to GLOBAL_SETTINGS
-	if not changed_setting.is_connected(GLOBAL_SETTINGS.apply_side_effects):
-		changed_setting.connect(GLOBAL_SETTINGS.apply_side_effects)
-
 	# Creates each button and adds it to the settings container
 	init_menu_buttons()
 
@@ -127,13 +121,11 @@ func get_callback(setting: String) -> Callable:
 				GLOBAL_SETTINGS.inc_setting(setting)
 			if Input.is_action_just_pressed("ui_left"):
 				GLOBAL_SETTINGS.dec_setting(setting)
-			changed_setting.emit(setting)
 
 	if setting_type == TYPE_BOOL:
 		# This callback is for the `pressed` signal
 		return func():
 			GLOBAL_SETTINGS.flip_setting(setting)
-			changed_setting.emit(setting)
 
 	# If you have settings of other types, you can add them here
 	return func(_event):

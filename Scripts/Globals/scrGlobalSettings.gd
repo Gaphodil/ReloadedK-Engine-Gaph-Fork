@@ -4,7 +4,7 @@ const DATA_PATH := "user://Data/Settings.cfg"
 #const SAVE_PASSWORD_STRING := "Change me!"
 
 ## A class that represents a single setting.
-class Setting:
+class Setting extends RefCounted:
 	var type: Variant.Type
 	var default: Variant
 	var value: Variant:
@@ -101,8 +101,8 @@ var formatted: Dictionary = {
 }
 
 # Window related variables, for handling window modes
-var INITIAL_WINDOW_WIDTH: int = DisplayServer.window_get_size().x
-var INITIAL_WINDOW_HEIGHT: int = DisplayServer.window_get_size().y
+@onready var INITIAL_WINDOW_WIDTH: int = get_window().size.x
+@onready var INITIAL_WINDOW_HEIGHT: int = get_window().size.y
 
 # Enum for FPS display values
 enum FpsDisplay {
@@ -257,10 +257,9 @@ func default_settings() -> void:
 ## Sets the game's window mode by checking the fullscreen setting.
 func set_window_mode():
 	if get_setting("fullscreen") == true:
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+		get_window().mode = Window.MODE_FULLSCREEN
 	else:
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-		# DisplayServer.window_set_size(Vector2(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT))
+		get_window().mode = Window.MODE_WINDOWED
 		set_window_scale()
 
 ## Sets the game's vsync mode by checking the vsync setting.
@@ -273,9 +272,10 @@ func set_vsync_mode():
 ## Sets the window scaling.
 func set_window_scale():
 	var scale = get_setting("window_scaling")
-	var newSize = Vector2(INITIAL_WINDOW_WIDTH * scale, INITIAL_WINDOW_HEIGHT * scale)
-	var oldSize = Vector2(DisplayServer.window_get_size())
+	var window = get_window()
+	var new_size = Vector2(INITIAL_WINDOW_WIDTH * scale, INITIAL_WINDOW_HEIGHT * scale)
+	var old_size = Vector2(window.size)
 	# Check to avoid recentering when not changing scale
-	if oldSize != newSize:
-		DisplayServer.window_set_size(newSize)
-		get_window().move_to_center()
+	if old_size != new_size:
+		window.size = new_size
+		window.move_to_center()
