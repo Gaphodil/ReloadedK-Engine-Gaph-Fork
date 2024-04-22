@@ -150,15 +150,23 @@ func toggle_fullscreen() -> void:
 
 
 ## Performs the necessary cleanup and returns to the main menu.
-func full_game_restart() -> void:
+## If [param to_scene] is supplied and ends in `.tscn`, it will attempt to 
+## change to this scene instead of the main scene.
+func full_game_restart(to_scene: String = "") -> void:
 	if is_valid_room():
 		
 		# If the scene we're on is not the initial project's scene, we change
 		# our current scene to it, essentially working as a game reset.
-		# We get the main scene from our project settings. To compare the name,
-		# we get the setting, then the file name and then we trim the ".tscn" suffix
-		if (get_tree().get_current_scene().name != ProjectSettings.get_setting("application/run/main_scene").get_file().trim_suffix(".tscn")):
-			get_tree().change_scene_to_file(ProjectSettings.get_setting("application/run/main_scene"))
+		if to_scene and to_scene.ends_with(".tscn"):
+			# At the moment, this is only called from `scrPauseMenuMain`,
+			# passing the `main_menu` scene, which differs from the actual main scene.
+			if get_tree().get_current_scene().name != to_scene.trim_suffix(".tscn"):
+				get_tree().change_scene_to_file(to_scene)
+		else:
+			# We get the main scene from our project settings. To compare the name,
+			# we get the setting, then the file name and then we trim the ".tscn" suffix
+			if (get_tree().get_current_scene().name != ProjectSettings.get_setting("application/run/main_scene").get_file().trim_suffix(".tscn")):
+				get_tree().change_scene_to_file(ProjectSettings.get_setting("application/run/main_scene"))
 		
 		# This is to restart everything even if the game is currently paused.
 		# I like it that way, but maybe a cleaner way is to not allow a full
