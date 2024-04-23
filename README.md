@@ -19,6 +19,15 @@ You can check the [engine's documentation](https://github.com/ReloadedK-git/Relo
 
 # Changelog
 
+### v1.14 (???)
+
+* Partially removed reused code in `PauseMenu` from `GlobalGame`
+* Added dev option for decimal precision in debug position information
+* Redesigned platforms to be similar to other engines:
+    * Jumping in platforms is a single jump by default, which restores double jump
+    * Jumping through a platform can snap the player to the top of it, cutting their upward velocity instantly
+* Added `UnlandablePlatform`, implemented as an `Area2D`.
+
 ### v1.13 (2024-04-17)
 
 * Added HUD scaling to FPS display

@@ -267,6 +267,8 @@ position = Vector2(1, 6)
 shape = SubResource("RectangleShape2D_mo373")
 debug_color = Color(1, 0.00784314, 0.0509804, 0.419608)
 
+[connection signal="area_shape_entered" from="extraCollisions/Platforms" to="." method="_on_platforms_area_shape_entered"]
+[connection signal="area_shape_exited" from="extraCollisions/Platforms" to="." method="_on_platforms_area_shape_exited"]
 [connection signal="body_entered" from="extraCollisions/Platforms" to="." method="_on_platforms_body_entered"]
 [connection signal="body_exited" from="extraCollisions/Platforms" to="." method="_on_platforms_body_exited"]
 [connection signal="body_entered" from="extraCollisions/Killers" to="." method="_on_killers_body_entered"]

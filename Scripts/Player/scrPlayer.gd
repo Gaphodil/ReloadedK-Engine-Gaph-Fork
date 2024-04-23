@@ -14,6 +14,7 @@ var jump_release_falloff: float = 0.45
 var xscale: bool = true
 var frozen: bool = false
 var d_jump: bool = true
+var s_jump_aux: bool = false
 var d_jump_aux: bool = false
 var in_water: bool = false
 var v_speed_modifier: float = 1.0
@@ -41,6 +42,8 @@ signal player_jumped
 signal player_djumped
 signal player_walljumped
 signal player_shot
+signal player_entered_platform
+signal player_exited_platform
 
 func _ready():
 	
@@ -223,11 +226,13 @@ func handle_jumping() -> void:
 	
 	# Adds vertical velocity when jumping
 	if Input.is_action_just_pressed("button_jump"):
-		if (is_on_floor() == true):
+		if (is_on_floor() == true or s_jump_aux):
 			velocity.y = -s_jump_speed
 			GLOBAL_SOUNDS.play_sound(GLOBAL_SOUNDS.sndJump)
 			# Emit the `player_jumped` signal
 			player_jumped.emit()
+			# Reassigns `djump` here as well
+			d_jump = true
 			
 		# If d_jump is available or you're inside a platform, the player now
 		# jumps with d_jump_speed. Inside of platforms you can jump infinitely,
@@ -518,6 +523,13 @@ func on_death():
 		# Destroys the player
 		queue_free()
 
+## Snaps the player's to the y position, and sets the upward velocity to 0.
+func snap_feet_to(y: float) -> void:
+	# Leaving the fractional portion intact because what if I *want* subpixel nonsense
+	position.y -= int(position.y)
+	# Since the player's position is 16 pixels above the ground, we handle that here
+	position.y += y - 16
+	velocity.y = 0
 
 
 """
@@ -525,10 +537,34 @@ func on_death():
 """
 # Platforms: 
 # -> Gives infinite djump while touching them
-func _on_platforms_body_entered(_body):
-	d_jump_aux = true
-func _on_platforms_body_exited(_body):
-	d_jump_aux = false
+
+# For movable platforms as AnimatableBody2D
+func _on_platforms_body_entered(body: Node2D):
+	# The body must be of the Platform group, which should the `grounded_jump` bool
+	handle_entered_platform(body.grounded_jump)
+	player_entered_platform.emit(body.get_instance_id())
+func _on_platforms_body_exited(body: Node2D):
+	handle_exited_platform(body.grounded_jump)
+	player_exited_platform.emit(body.get_instance_id())
+
+# For unlandable platforms as Area2D
+func _on_platforms_area_shape_entered(_area_rid, area, _area_shape_index, _local_shape_index):
+	handle_entered_platform(area.grounded_jump)
+	player_entered_platform.emit(area.get_instance_id())
+func _on_platforms_area_shape_exited(_area_rid, area, _area_shape_index, _local_shape_index):
+	handle_exited_platform(area.grounded_jump)
+	player_exited_platform.emit(area.get_instance_id())
+
+func handle_entered_platform(grounded: bool) -> void:
+	if grounded:
+		s_jump_aux = true
+	else:
+		d_jump_aux = true
+func handle_exited_platform(grounded: bool) -> void:
+	if grounded:
+		s_jump_aux = false
+	else:
+		d_jump_aux = false
 
 
 # Killers

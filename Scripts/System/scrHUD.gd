@@ -25,6 +25,9 @@ var show_extra_debug: bool = false:
 ## instead of using the Engine value every second.
 var avg_fps: bool = false
 
+## The number of decimals the X and Y position round to.
+var pos_round_decimals: int = 4
+
 func _ready():
 	$Display/MarginContainer2.set_visible(false)
 	fps_container.set_visible(false)
@@ -85,8 +88,11 @@ func handle_debug_mode() -> void:
 			# Will jitter if Player text is longer than Room text
 			$Display/MarginContainer.pivot_offset.x = $Display/MarginContainer.size.x
 			$Display/MarginContainer.set_visible(true)
-			$Display/MarginContainer/VBoxContainer/textDebug1.text = str(" Player X: ", round(GLOBAL_INSTANCES.objPlayerID.position.x), " ")
-			$Display/MarginContainer/VBoxContainer/textDebug2.text = str(" Player Y: ", round(GLOBAL_INSTANCES.objPlayerID.position.y), " ")
+			# per tutorials/scripting/gdscript/gdscript_format_string.html#dynamic-padding
+			var x_pos_str: String = "%.*f" % [pos_round_decimals, GLOBAL_INSTANCES.objPlayerID.position.x]
+			var y_pos_str: String = "%.*f" % [pos_round_decimals, GLOBAL_INSTANCES.objPlayerID.position.y]
+			$Display/MarginContainer/VBoxContainer/textDebug1.text = str(" Player X: ", x_pos_str, " ")
+			$Display/MarginContainer/VBoxContainer/textDebug2.text = str(" Player Y: ", y_pos_str, " ")
 			var fps: int = manual_fps if avg_fps else int(Engine.get_frames_per_second())
 			$Display/MarginContainer/VBoxContainer/textDebug3.text = str(" FPS: %d" % fps, " ")
 			
