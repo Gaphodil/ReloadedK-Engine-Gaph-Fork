@@ -19,15 +19,15 @@ You can check the [engine's documentation](https://github.com/ReloadedK-git/Relo
 
 # Changelog
 
-### v1.14 (???)
+### v1.14 (2024-04-23)
 
-* Partially removed reused code in `PauseMenu` from `GlobalGame`
-* Added dev option for decimal precision in debug position information
 * Redesigned platforms to be similar to other engines:
     * Jumping in platforms is a single jump by default, which restores double jump
     * Jumping through a platform can snap the player to the top of it, cutting their upward velocity instantly
 * Added `UnlandablePlatform`, implemented as an `Area2D`
 * Merged v1.10 from upstream (which is itself mostly a manual merge of this)
+* Partially removed reused code in `PauseMenu` from `GlobalGame`
+* Added dev option for decimal precision in debug position information
 * Added dev option for allowing `Player` to jump off vines while grounded
 * Added opt-out validation of `GlobalSettings` to prevent integer or float values unaligned with `step`
 * Added opt-in assignment of `GlobalSettings` as "engine" values that are not saved to the config file or otherwise visible to the user
