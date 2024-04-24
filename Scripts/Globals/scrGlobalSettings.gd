@@ -16,6 +16,9 @@ class Setting extends RefCounted:
 	var max_val: Variant
 	var step: Variant
 
+	## If true, validates the value as being true to `step` as well.
+	var do_validate: bool = true
+
 	func _init(
 		_type: Variant.Type,
 		_default: Variant,
@@ -43,9 +46,22 @@ class Setting extends RefCounted:
 		assert(typeof(new_val) == type, "Value must be of type " + type_string(type))
 		if type == TYPE_INT:
 			value = clampi(new_val, min_val, max_val)
+			validate()
 		elif type == TYPE_FLOAT:
 			value = clampf(new_val, min_val, max_val)
+			validate()
 		else:
+			value = new_val
+
+	## Rounds the value to the nearest valid `step`.
+	func validate():
+		if do_validate:
+			# Assumes that `max_val` is a whole number of `step`s from `min_val`
+			# Approximate the number of steps and re-adds to the min_val
+			var steps: int = round((value - min_val) / float(step))
+			var new_val = min_val + steps * step
+			if value != new_val:
+				print_debug("Setting revalidated from " + str(value) + " to " + str(new_val))
 			value = new_val
 	
 	## Returns the value to default.
@@ -73,9 +89,9 @@ var dict: Dictionary = {
 	"music_volume": Setting.new(TYPE_FLOAT, 1.0, 0.0, 1.0, 0.1, "volume"),
 	"sound_volume": Setting.new(TYPE_FLOAT, 1.0, 0.0, 1.0, 0.1, "volume"),
 	"fullscreen": Setting.new(TYPE_BOOL, false),
-	"zoom_scaling": Setting.new(TYPE_FLOAT, 1.0, 1.0, 2.0, 1.0),
-	"hud_scaling": Setting.new(TYPE_FLOAT, 1.0, 1.0, 1.5, 0.5),
-	"window_scaling": Setting.new(TYPE_FLOAT, 1.0, 1.0, 2.0, 0.5),
+	"zoom_scaling": Setting.new(TYPE_FLOAT, 1.0, 1.0, 2.0, 0.5),
+	"hud_scaling": Setting.new(TYPE_FLOAT, 1.0, 1.0, 2.0, 0.5),
+	"window_scaling": Setting.new(TYPE_FLOAT, 1.0, 0.5, 2.5, 0.5),
 	"vsync": Setting.new(TYPE_BOOL, true),
 	"autoreset": Setting.new(TYPE_BOOL, false),
 	"fps_display": Setting.new(TYPE_INT, FpsDisplay.OFF, 0, 2, 1),
@@ -101,6 +117,9 @@ var formatted: Dictionary = {
 	"extra_keys": "Extra Keys",
 }
 
+## List of settings that should not have their values validated.
+var do_not_validate: Array[String] = []
+
 # Window related variables, for handling window modes
 @onready var INITIAL_WINDOW_WIDTH: int = get_window().size.x
 @onready var INITIAL_WINDOW_HEIGHT: int = get_window().size.y
@@ -121,6 +140,10 @@ enum TitlebarStats {
 }
 
 func _ready():
+	# Disable validation for specified list
+	for setting in do_not_validate:
+		dict[setting].do_validate = false
+
 	var dir = DirAccess.open("user://")
 	
 	# If, for any reason, the Data directory doesn't exist, it creates it
