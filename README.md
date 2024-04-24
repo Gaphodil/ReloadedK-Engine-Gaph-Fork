@@ -29,6 +29,8 @@ You can check the [engine's documentation](https://github.com/ReloadedK-git/Relo
 * Added `UnlandablePlatform`, implemented as an `Area2D`
 * Merged v1.10 from upstream (which is itself mostly a manual merge of this)
 * Added dev option for allowing `Player` to jump off vines while grounded
+* Added opt-out validation of `GlobalSettings` to prevent integer or float values unaligned with `step`
+* Added opt-in assignment of `GlobalSettings` as "engine" values that are not saved to the config file or otherwise visible to the user
 
 ### v1.13 (2024-04-17)
 

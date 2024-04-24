@@ -7,12 +7,16 @@ extends Control
 @onready var dict: Dictionary = GLOBAL_SETTINGS.dict
 
 ## An array of setting names to exclude from this menu.
-var excluded_settings: Array = []
+var excluded_settings: Array[String] = []
 
 # Camera handling
 @onready var camera_anchor_node: Node = $Environment/cameraAnchor
 
 func _ready():
+	# Adds `engine_settings` to `excluded_settings`.
+	# No checking for repeats but the performance impact is nominal.
+	excluded_settings.append_array(GLOBAL_SETTINGS.engine_settings)
+
 	# Creates each button and adds it to the settings container
 	init_menu_buttons()
 

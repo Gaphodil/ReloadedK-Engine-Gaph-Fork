@@ -62,8 +62,8 @@ class Setting extends RefCounted:
 			var new_val = min_val + steps * step
 			if value != new_val:
 				print_debug("Setting revalidated from " + str(value) + " to " + str(new_val))
-			value = new_val
-	
+				value = new_val
+
 	## Returns the value to default.
 	func reset_value():
 		value = default
@@ -119,6 +119,10 @@ var formatted: Dictionary = {
 
 ## List of settings that should not have their values validated.
 var do_not_validate: Array[String] = []
+
+## List of settings that you, the developer, wants to hide from the user entirely.
+## These will not be saved or loaded, and so the given default will always be used.
+var engine_settings: Array[String] = []
 
 # Window related variables, for handling window modes
 @onready var INITIAL_WINDOW_WIDTH: int = get_window().size.x
@@ -218,6 +222,8 @@ func save_settings() -> void:
 	var configFile := ConfigFile.new()
 
 	for setting in dict.keys():
+		if setting in engine_settings:
+			continue
 		configFile.set_value(dict[setting].section, setting, dict[setting].value)
 	
 	for action in InputMap.get_actions():
@@ -256,6 +262,8 @@ func load_settings() -> void:
 	configFile.load(DATA_PATH)
 	
 	for setting in dict.keys():
+		if setting in engine_settings:
+			continue
 		dict[setting].set_value(
 			configFile.get_value(
 				dict[setting].section, setting, dict[setting].value
