@@ -28,6 +28,7 @@ You can check the [engine's documentation](https://github.com/ReloadedK-git/Relo
     * Jumping through a platform can snap the player to the top of it, cutting their upward velocity instantly
 * Added `UnlandablePlatform`, implemented as an `Area2D`
 * Merged v1.10 from upstream (which is itself mostly a manual merge of this)
+* Added dev option for allowing `Player` to jump off vines while grounded
 
 ### v1.13 (2024-04-17)
 

@@ -36,6 +36,9 @@ var debug_hitbox: bool = false:
 		debug_hitbox = val
 		$playerMask/ColorRect.visible = val
 
+## If true, the player can do a vine jump while touching the ground.
+var allow_grounded_vines: bool = false
+
 # Various signals. Only jump and djump are currently used!
 signal player_died
 signal player_jumped
@@ -262,10 +265,9 @@ func handle_walljumping():
 		# Walljumping shouldn't activate if we're grounded. Otherwise,
 		# it if wasn't active before, it now is. Also sets the vertical
 		# velocity to 0, so we don't slide with inertia
-		if is_on_floor():
+		if not allow_grounded_vines and is_on_floor():
 			is_walljumping = false
 		else:
-			
 			if !is_walljumping:
 				velocity.y = 0
 				is_walljumping = true
