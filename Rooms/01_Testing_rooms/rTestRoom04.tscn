@@ -17,7 +17,7 @@
 [ext_resource type="PackedScene" uid="uid://dvoglwrd5xiy4" path="res://Objects/Gimmicks/tilVines.tscn" id="12_qhemq"]
 [ext_resource type="PackedScene" uid="uid://disuddxn6h6vm" path="res://Objects/Hazards/tilSpikes.tscn" id="13_i8h3y"]
 [ext_resource type="PackedScene" uid="uid://cp85j3jgqvoma" path="res://Objects/Hazards/objLaserDynamic.tscn" id="13_ocyj7"]
-[ext_resource type="PackedScene" path="res://Objects/Gimmicks/tilPlatformBlock.tscn" id="16_oxerl"]
+[ext_resource type="PackedScene" uid="uid://dyy6q5ebg838k" path="res://Objects/Gimmicks/tilPlatformBlock.tscn" id="16_oxerl"]
 [ext_resource type="PackedScene" uid="uid://ddjx8w1j80w1t" path="res://Objects/Hazards/objSpikeBlock.tscn" id="18_87ase"]
 [ext_resource type="PackedScene" uid="uid://blj3cyjlb8uil" path="res://Objects/Gimmicks/objInvisibleBlock.tscn" id="18_om7he"]
 [ext_resource type="PackedScene" uid="uid://dvh5p5m0s4ju3" path="res://Objects/Collectables/objCollectableItem.tscn" id="19_ghuib"]
@@ -29,17 +29,17 @@
 [ext_resource type="PackedScene" uid="uid://c7d7yav7g756d" path="res://Objects/Dialog_system/objCollisionDialogSpawner.tscn" id="26_vce6n"]
 [ext_resource type="PackedScene" uid="uid://dcni7tlrib6ai" path="res://Objects/Dialog_system/List/dialogTesting02.tscn" id="27_chs10"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_mggbx"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_f0rgc"]
 shader = ExtResource("9_jmqlv")
 shader_parameter/new_color = Color(0, 0, 1, 1)
 shader_parameter/blinking = false
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_jlrr4"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4o8vk"]
 shader = ExtResource("9_jmqlv")
 shader_parameter/new_color = Color(1, 0, 0, 1)
 shader_parameter/blinking = false
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_36vde"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_o7137"]
 shader = ExtResource("9_jmqlv")
 shader_parameter/new_color = Color(0, 0.823529, 0, 1)
 shader_parameter/blinking = false
@@ -104,16 +104,16 @@ warp_to = "res://Rooms/01_Testing_rooms/rRoomSelection.tscn"
 [node name="Gimmicks" type="Node2D" parent="."]
 
 [node name="tilSheepBlocks" parent="Gimmicks" instance=ExtResource("8_3tsjv")]
-material = SubResource("ShaderMaterial_mggbx")
+material = SubResource("ShaderMaterial_f0rgc")
 layer_0/tile_data = PackedInt32Array(1900564, 0, 0, 1900563, 0, 0, 1900562, 0, 0, 1769491, 65536, 0, 1835027, 65536, 0)
 
 [node name="tilSheepBlocks2" parent="Gimmicks" instance=ExtResource("8_3tsjv")]
-material = SubResource("ShaderMaterial_jlrr4")
+material = SubResource("ShaderMaterial_4o8vk")
 layer_0/tile_data = PackedInt32Array(1900558, 0, 0, 1900557, 0, 0, 1900556, 0, 0, 1835021, 65536, 0, 1638413, 65536, 0, 1638414, 65536, 0, 1638412, 65536, 0, 1900555, 0, 0, 1835020, 65536, 0, 1638411, 65536, 0)
 tilemap_color = Color(1, 0, 0, 1)
 
 [node name="tilSheepBlocks3" parent="Gimmicks" instance=ExtResource("8_3tsjv")]
-material = SubResource("ShaderMaterial_36vde")
+material = SubResource("ShaderMaterial_o7137")
 layer_0/tile_data = PackedInt32Array(1703941, 0, 0, 1769477, 0, 0, 1703942, 65536, 0, 1769478, 65536, 0, 1835013, 0, 0, 1900549, 0, 0, 1835014, 65536, 0, 1900550, 0, 0, 1900551, 0, 0)
 tilemap_color = Color(0, 0.823529, 0, 1)
 
@@ -139,7 +139,6 @@ position = Vector2(672, 736)
 bounce_amount = 300
 
 [node name="platformBlockTilemap" parent="Gimmicks" instance=ExtResource("16_oxerl")]
-rendering_quadrant_size = 32
 layer_0/tile_data = PackedInt32Array(458752, 0, 0, 458776, 0, 0)
 
 [node name="objInvisibleBlock" parent="Gimmicks" instance=ExtResource("18_om7he")]

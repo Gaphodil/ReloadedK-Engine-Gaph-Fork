@@ -4,7 +4,7 @@
 [ext_resource type="Shader" path="res://Scripts/Shaders/shSheepBlocks.gdshader" id="1_jgjs5"]
 [ext_resource type="Script" path="res://Scripts/Gimmicks/scrSheepBlocks.gd" id="2_rdu3k"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_aamtx"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_85j8c"]
 shader = ExtResource("1_jgjs5")
 shader_parameter/new_color = Color(0, 0, 1, 1)
 shader_parameter/blinking = false
@@ -94,7 +94,7 @@ _data = {
 }
 
 [node name="tilSheepBlocks" type="TileMap"]
-material = SubResource("ShaderMaterial_aamtx")
+material = SubResource("ShaderMaterial_85j8c")
 tile_set = SubResource("TileSet_pm6h4")
 format = 2
 script = ExtResource("2_rdu3k")

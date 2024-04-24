@@ -100,7 +100,8 @@ func handle_debug_mode() -> void:
 			if get_tree().get_current_scene() != null:
 				$Display/MarginContainer/VBoxContainer/textDebug4.text = str(" Room: ", get_tree().get_current_scene().name, " ")
 			
-			$Sprite2D.set_visible(true)
+			# Debug "cursor indicator"
+			$Sprite2D.set_visible(not Input.is_action_pressed("button_debug_teleport"))
 			$Sprite2D.position = get_global_mouse_position()
 			$Sprite2D.flip_h = !GLOBAL_INSTANCES.objPlayerID.xscale
 
@@ -171,4 +172,3 @@ func handle_fps_indic(delta):
 				fps_fadeout_amt = -1.0
 	else:
 		fps_fadeout_amt = -1.0
-

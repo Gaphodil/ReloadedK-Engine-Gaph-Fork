@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=5 format=3 uid="uid://bsio0seepyrfg"]
 
 [ext_resource type="Script" path="res://Scripts/Dialog_system/scrDialogBox.gd" id="1_twjvn"]
 [ext_resource type="Texture2D" uid="uid://cgvc5dghd2jq0" path="res://Graphics/Sprites/Dialog_system/sprDialogPlayer.png" id="2_70alf"]

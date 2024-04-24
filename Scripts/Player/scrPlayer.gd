@@ -3,7 +3,7 @@ extends CharacterBody2D
 class_name Player
 
 """
----------- VARIABLE DECLARATIONS ---------- 
+---------- VARIABLE DECLARATIONS ----------
 """
 var gravity: int = 1000
 var v_speed: int = 470
@@ -49,7 +49,7 @@ func _ready():
 	
 	# If a savefile exists (we've saved at least once), we move the player to
 	# the saved position, and also set its sprite state (flipped or not).
-	if (GLOBAL_SAVELOAD.variableGameData.first_time_saving == false):
+	if not GLOBAL_SAVELOAD.variableGameData.first_time_saving:
 		set_position_on_load()
 		flip_sprites_on_creation()
 	
@@ -111,7 +111,6 @@ func _physics_process(delta):
 func _unhandled_key_input(event: InputEvent):
 	handle_debug_keys(event)
 
-
 """
 ---------- CUSTOM METHODS ----------
 """
@@ -138,7 +137,6 @@ func set_position_on_load():
 		GLOBAL_GAME.warp_to_point = Vector2.ZERO
 		GLOBAL_GAME.is_changing_rooms = false
 
-
 # We make a save with this player's current coordinates, sprite state, and room
 # name (without taking a screenshot).
 # This is done to prevent a common issue that happens when restarting with a 
@@ -160,7 +158,6 @@ func set_first_time_saving():
 	# we just saved, reading them once through loading.
 	GLOBAL_SAVELOAD.load_data()
 
-
 # Handles gravity / falling
 func handle_gravity(delta) -> void:
 	
@@ -171,7 +168,6 @@ func handle_gravity(delta) -> void:
 		# Clamps the falling value to v_speed, which is also modified by 
 		# water physics. Check _handle_water()
 		velocity.y = min(v_speed * v_speed_modifier, velocity.y)
-
 
 # Main movement logic (walking/running)
 func handle_movement() -> void:
@@ -216,7 +212,6 @@ func handle_movement() -> void:
 			velocity.x = extra_direction_keys * h_speed
 			xscale_to_direction.call(extra_direction_keys)
 
-
 # Jumping logic
 func handle_jumping() -> void:
 	
@@ -255,7 +250,6 @@ func handle_jumping() -> void:
 	if Input.is_action_just_released("button_jump") and (velocity.y < 0):
 		velocity.y *= jump_release_falloff
 
-
 # Method that handles the walljumping gimmick. It's divided into 2 parts:
 # 1) Setting walljumping (whether it should be active or not)
 # 2) The "walljumping" action
@@ -277,8 +271,6 @@ func handle_walljumping():
 				is_walljumping = true
 	else:
 		is_walljumping = false
-	
-	
 	
 	# 2) "Walljumping" action:
 	# If we are in a walljumping state, it slows our vertical speed down and
@@ -358,7 +350,6 @@ func handle_walljumping():
 		# just call it here instead of re-setting things manually
 		handle_water()
 
-
 # Shooting logic
 func handle_shooting():
 	if Input.is_action_just_pressed("button_shoot"):
@@ -390,7 +381,6 @@ func handle_shooting():
 			# If necessary, parameters can be passed e.g. bullet direction
 			player_shot.emit()
 
-
 # Method to handle sprite animations
 func handle_animations() -> void:
 	
@@ -398,7 +388,7 @@ func handle_animations() -> void:
 	if !is_walljumping:
 		
 		# If on the air, checks Y velocity for the jumping or falling animations
-		if (is_on_floor() == false): #and (on_platform == false):
+		if not is_on_floor():
 			if (velocity.y < 0):
 				animated_sprite.play("jump")
 			else:
@@ -418,7 +408,6 @@ func handle_animations() -> void:
 	# Flips the player sprite using the "xscale" variable
 	animated_sprite.flip_h = !xscale
 
-
 # Checks the scrGlobalSaveload autoload in order to know if the sprite should
 # be flipped horizontally on creation
 func flip_sprites_on_creation() -> void:
@@ -429,13 +418,12 @@ func flip_sprites_on_creation() -> void:
 	# Also rotates masks
 	handle_masks()
 
-
 # Handles masks specifically. Looks cleaner if put into its own method rather
 # than placing it inside the animations one.
 # Keep in mind, masks inside $extraCollisions might have different shapes,
 # intended for different purposes
 func handle_masks() -> void:
-	if xscale == true:
+	if xscale:
 		$playerMask.position.x = 1
 	else:
 		$playerMask.position.x = -1
@@ -444,22 +432,20 @@ func handle_masks() -> void:
 	# reference each one of them
 	$extraCollisions.scale.x = $playerMask.position.x
 
-
 # Interaction with water
 func handle_water() -> void:
 	
 	# Changes the player's falling speed when on water, and returns it to 
 	# normal when outside of it. Values can get changed here, for convenience
-	if (in_water == true):
+	if in_water:
 		v_speed_modifier = 0.4
 	else:
 		v_speed_modifier = 1.0
 
-
 # Teleports the player to the mouse position when "button_debug_teleport"
 # is pressed (only on debug mode)
 func debug_mouse_teleport() -> void:
-	if (GLOBAL_GAME.debug_mode == true):
+	if GLOBAL_GAME.debug_mode:
 		if Input.is_action_pressed("button_debug_teleport"):
 			position = get_global_mouse_position()
 
@@ -531,7 +517,6 @@ func snap_feet_to(y: float) -> void:
 	position.y += y - 16
 	velocity.y = 0
 
-
 """
 ---------- EXTRA COLLISIONS ----------
 """
@@ -566,12 +551,10 @@ func handle_exited_platform(grounded: bool) -> void:
 	else:
 		d_jump_aux = false
 
-
 # Killers
 # -> Calls "on_death"
 func _on_killers_body_entered(_body):
 	on_death()
-
 
 # Water
 # -> Indicates whether the player is inside of water
@@ -580,13 +563,11 @@ func _on_water_area_entered(_area):
 func _on_water_area_exited(_area):
 	in_water = false
 
-
 # IsCrushed
 # -> Checks if the player is inside of walls, calling "on_death" if true.
 #    It has a smaller collision shape
 func _on_is_crushed_body_entered(_body):
 	on_death()
-
 
 # Vines
 # -> Indicates whether the player is touching a vine, for walljumping
@@ -595,7 +576,6 @@ func _on_vines_body_entered(_body):
 		can_walljump = true
 func _on_vines_body_exited(_body):
 	can_walljump = false
-
 
 func _on_sheep_blocks_body_entered(body):
 	if !body.activated:

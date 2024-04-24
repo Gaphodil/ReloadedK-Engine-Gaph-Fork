@@ -1,6 +1,7 @@
 extends Node
 
 const DATA_PATH := "user://Data/Settings.cfg"
+
 #const SAVE_PASSWORD_STRING := "Change me!"
 
 ## A class that represents a single setting.
@@ -108,7 +109,7 @@ var formatted: Dictionary = {
 enum FpsDisplay {
 	OFF,
 	LAG_ONLY,
-	ALWAYS_ON	
+	ALWAYS_ON
 }
 
 # Enum for titlebar stats
@@ -228,7 +229,7 @@ func apply_side_effects(setting: String):
 
 ## Load and set settings.
 func load_settings() -> void:
-	var configFile: = ConfigFile.new()
+	var configFile := ConfigFile.new()
 	configFile.load(DATA_PATH)
 	
 	for setting in dict.keys():
@@ -253,7 +254,6 @@ func default_settings() -> void:
 	apply_side_effects("all")
 	apply_side_effects("hud_scaling")
 
-
 ## Sets the game's window mode by checking the fullscreen setting.
 func set_window_mode():
 	if get_setting("fullscreen") == true:
@@ -271,10 +271,15 @@ func set_vsync_mode():
 
 ## Sets the window scaling.
 func set_window_scale():
-	var scale = get_setting("window_scaling")
 	var window = get_window()
+	# OS-specific(?) fix to avoid stuttering
+	if window.get_mode() != Window.MODE_WINDOWED:
+		return
+
+	var scale = get_setting("window_scaling")
 	var new_size = Vector2(INITIAL_WINDOW_WIDTH * scale, INITIAL_WINDOW_HEIGHT * scale)
 	var old_size = Vector2(window.size)
+
 	# Check to avoid recentering when not changing scale
 	if old_size != new_size:
 		window.size = new_size

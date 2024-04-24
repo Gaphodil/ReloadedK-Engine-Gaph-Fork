@@ -14,7 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://bo3vrmvp7ayf8" path="res://Objects/Room_objects/objWarp.tscn" id="11_txgun"]
 [ext_resource type="PackedScene" uid="uid://disuddxn6h6vm" path="res://Objects/Hazards/tilSpikes.tscn" id="13_684js"]
 [ext_resource type="PackedScene" uid="uid://dflbh74106rum" path="res://Objects/Hazards/objLaserStatic.tscn" id="13_dou4i"]
-[ext_resource type="PackedScene" path="res://Objects/Gimmicks/tilPlatformBlock.tscn" id="13_j3bu7"]
+[ext_resource type="PackedScene" uid="uid://dyy6q5ebg838k" path="res://Objects/Gimmicks/tilPlatformBlock.tscn" id="13_j3bu7"]
 [ext_resource type="PackedScene" uid="uid://blwcesaom6rxd" path="res://Objects/Gimmicks/objWater.tscn" id="13_ltcvs"]
 [ext_resource type="PackedScene" uid="uid://dr8oelp87b8uc" path="res://Objects/Gimmicks/objCoin.tscn" id="14_wom3c"]
 [ext_resource type="PackedScene" uid="uid://cp85j3jgqvoma" path="res://Objects/Hazards/objLaserDynamic.tscn" id="15_ubx6v"]
@@ -73,7 +73,6 @@ rendering_quadrant_size = 32
 layer_0/tile_data = PackedInt32Array(1114115, 0, 0, 1114116, 0, 0, 1114117, 0, 0, 1114118, 0, 0, 1114119, 0, 0, 1114120, 0, 0, 1114121, 0, 0, 1114122, 0, 0, 1114123, 0, 0, 1114124, 0, 0, 1114125, 0, 0, 1114126, 0, 0, 1114127, 0, 0, 1114128, 0, 0, 1114129, 0, 0, 1114130, 0, 0, 1114131, 0, 0, 1114132, 0, 0, 1114133, 0, 0, 1114134, 0, 0, 1114135, 0, 0, 1114136, 0, 0, 1114137, 0, 0, 1114138, 0, 0, 1114139, 0, 0, 1114140, 0, 0, 1114141, 0, 0, 1114142, 0, 0, 1114143, 0, 0, 1114144, 0, 0, 1114145, 0, 0, 1114146, 0, 0, 1114147, 0, 0, 1114148, 0, 0, 1114149, 0, 0, 1114150, 0, 0, 1114151, 0, 0, 1114152, 0, 0)
 
 [node name="platformBlockTilemap" parent="Gimmicks" instance=ExtResource("13_j3bu7")]
-rendering_quadrant_size = 32
 layer_0/tile_data = PackedInt32Array(196656, 0, 0, 983088, 0, 0)
 
 [node name="objWater" parent="Gimmicks" instance=ExtResource("13_ltcvs")]

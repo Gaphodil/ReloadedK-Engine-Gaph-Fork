@@ -26,7 +26,8 @@ You can check the [engine's documentation](https://github.com/ReloadedK-git/Relo
 * Redesigned platforms to be similar to other engines:
     * Jumping in platforms is a single jump by default, which restores double jump
     * Jumping through a platform can snap the player to the top of it, cutting their upward velocity instantly
-* Added `UnlandablePlatform`, implemented as an `Area2D`.
+* Added `UnlandablePlatform`, implemented as an `Area2D`
+* Merged v1.10 from upstream (which is itself mostly a manual merge of this)
 
 ### v1.13 (2024-04-17)
 
@@ -68,6 +69,24 @@ You can check the [engine's documentation](https://github.com/ReloadedK-git/Relo
 <summary>Original changelog (in reverse chronological order)</summary>
 
 # Change-log
+### v1.10 (22-04-2024)
+
+*Special thanks to Gaph and her fork of this engine for the many QOL improvements and observations, some of which became part of this update.*
+
+* ***objWarpTransition*** no longer takes focus away from the mouse.
+* ***scrGlobalSettings*** does not get reloaded after opening the pause menu.
+* Window handling operations no longer use DisplayServer, fixing some window mode related bugs in different OS.
+* ***objJumpSwitchSpike*** has been refactored.
+* Added new debug-related functionality to ***objPlayer***.
+* Added new debug-related visual information to ***objHUD***.
+* Added window scaling and window scaling settings to ***rMenuSettings***.
+* Added FPS display, time and death counters to the window title bar.
+* Removed unnecessary functions in ***scrGlobalGame***.
+* Minor changes to ***scrGlobalGame***.
+* Minor changes to ***rMenuSettings***.
+* Quitting to the main menu from the pause menu now behaves differently.
+* Added new sound effect to ***objFadingBlock***.
+
 ### v1.9 (01-02-24)
 
 * Fixed small visual bug for ***objLaserDynamic***.
@@ -86,7 +105,7 @@ You can check the [engine's documentation](https://github.com/ReloadedK-git/Relo
 * Added support for title screens.
 * Added new ***rTitle*** room.
 
-### v1.8 (09-01-24)
+### v1.8 (09-01-2024)
 
 * Added a new main menu room.
 * Separated menus based on their individual functions (main menu, file selection menu, options menu, controls menu).
