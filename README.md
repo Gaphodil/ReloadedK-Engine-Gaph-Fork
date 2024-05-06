@@ -32,6 +32,12 @@ You can check the [engine's documentation](https://github.com/ReloadedK-git/Relo
 * Added opt-out validation of `GlobalSettings` to prevent integer or float values unaligned with `step`
 * Added opt-in assignment of `GlobalSettings` as "engine" values that are not saved to the config file or otherwise visible to the user
 
+#### v1.14.1 (???)
+
+* Fixed issues with `TriggerBlock` and `JumpSwitchSpike` when parent node position changes or is not at (0, 0)
+* Allowed `TriggerBlock` target to function if placed at global (0, 0)
+* Added `distance_to_hidden` parameter to `JumpSwitchSpike`
+
 ### v1.13 (2024-04-17)
 
 * Added HUD scaling to FPS display

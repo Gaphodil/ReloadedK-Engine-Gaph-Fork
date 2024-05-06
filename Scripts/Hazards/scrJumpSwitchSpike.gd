@@ -11,6 +11,9 @@ extends AnimatableBody2D
 		set_angle()
 		set_initial_positions()
 
+## The distance between the spike and its hidden position.
+@export var distance_to_hidden: int = 32
+
 var position_shown: Vector2 = Vector2.ZERO
 var position_hidden: Vector2 = Vector2.ZERO
 var snap_range = Vector2(2, 2)
@@ -83,13 +86,14 @@ func set_angle():
 			scale = Vector2(1, -1)
 
 func set_initial_positions():
-	position_shown = global_position
+	# The hidden position is opposite the spike's point, represented by a negative
 	match spike_direction:
-		Dir.UP: position_hidden = Vector2(0, 32)
-		Dir.RIGHT: position_hidden = Vector2(-32, 0)
-		Dir.DOWN: position_hidden = Vector2(0, -32)
-		Dir.LEFT: position_hidden = Vector2(32, 0)
-	position_hidden += global_position
+		Dir.UP:    position_hidden = -distance_to_hidden * Vector2.UP
+		Dir.RIGHT: position_hidden = -distance_to_hidden * Vector2.RIGHT
+		Dir.DOWN:  position_hidden = -distance_to_hidden * Vector2.DOWN
+		Dir.LEFT:  position_hidden = -distance_to_hidden * Vector2.LEFT
+	# relative to its starting position
+	position_hidden += position
 
 func begin_switch():
 	spike_hidden = !spike_hidden
